@@ -7,7 +7,7 @@
     <jdbcConnection
         connectionURL="jdbc:mysql://localhost:3306/management"
         driverClass="com.mysql.cj.jdbc.Driver"
-        password="99988444"
+        password="xxxxxxxx"
         userId="root"
     />
 
