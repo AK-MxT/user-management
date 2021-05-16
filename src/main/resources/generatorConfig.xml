@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN" "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+<generatorConfiguration>
+  <context id="context1" targetRuntime="MyBatis3">
+
+    <!-- DB接続設定 -->
+    <jdbcConnection
+        connectionURL="jdbc:mysql://localhost:3306/management"
+        driverClass="com.mysql.cj.jdbc.Driver"
+        password="99988444"
+        userId="root"
+    />
+
+    <javaModelGenerator
+        targetPackage="com.user.mng.domain.model"
+        targetProject="user-mng-mock\src\main\java"
+    />
+
+    <sqlMapGenerator
+        targetPackage="com.user.mng.domain.repository"
+        targetProject="user-mng-mock\src\main\resources"
+    />
+
+    <javaClientGenerator
+        targetPackage="com.user.mng.domain.repository"
+        targetProject="user-mng-mock\src\main\java"
+        type="XMLMAPPER"
+    />
+
+    <table schema="management" tableName="trn_user" />
+
+  </context>
+</generatorConfiguration>
