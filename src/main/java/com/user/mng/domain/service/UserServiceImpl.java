@@ -4,8 +4,10 @@ import java.util.List;
 
 import org.springframework.stereotype.Service;
 
+import com.user.mng.constant.UserConstant;
 import com.user.mng.domain.model.TrnUser;
 import com.user.mng.domain.model.TrnUserExample;
+import com.user.mng.domain.model.entity.UserListEntity;
 import com.user.mng.domain.model.response.UserDetailResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
 import com.user.mng.domain.repository.TrnUserMapper;
@@ -30,10 +32,27 @@ public class UserServiceImpl implements UserService {
 		TrnUserExample filter = new TrnUserExample();
 		filter.setOrderByClause("id");
 
+		// ユーザ取得処理
 		List<TrnUser> result = trnUserMapper.selectByExample(filter);
 
+		// 返却用エンティティを生成
 		UserListResponseEntity res = new UserListResponseEntity();
-		res.setUserList(result);
+
+		result.forEach(p -> {
+			UserListEntity user = new UserListEntity();
+			user.setId(p.getId());
+			user.setLastName(p.getLastName());
+			user.setFirstName(p.getFirstName());
+			user.setGender(UserConstant.GENDER_MAN.equals(p.getGender()) ? UserConstant.GENDER_MAN_VIEW : UserConstant.GENDER_WOMAN_VIEW);
+			// TODO 日付のフォーマッタ作る
+			user.setBirthday(p.getBirthday().toString());
+			user.setUpdateDate(p.getUpdateDate().toString());
+
+			user.setUpdateUser(p.getUpdateUser());
+			user.setDeleteFlg(p.getDeleteFlg() ? UserConstant.DELETE_FLG_TRUE : UserConstant.DELETE_FLG_FALSE);
+
+			res.getUserList().add(user);
+		});
 
 		return res;
 	}
