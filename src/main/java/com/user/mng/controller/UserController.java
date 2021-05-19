@@ -54,7 +54,7 @@ public class UserController {
 	 *
 	 * @return ユーザ詳細画面
 	 */
-	@RequestMapping(value = "/{id}")
+	@RequestMapping(value = "/detail/{id}")
 	public String detail(@PathVariable Long id, Model model) {
 
 		UserDetailResponseEntity user = userService.getUser(id);
@@ -62,6 +62,6 @@ public class UserController {
 		model.addAttribute("list", user.getUser());
 
 		// src/main/resources/templates/list.html を呼び出す
-		return "list";
+		return "detail";
 	}
 }
