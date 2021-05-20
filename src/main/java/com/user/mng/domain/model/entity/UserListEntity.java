@@ -4,8 +4,7 @@ import lombok.Data;
 
 /**
  * ユーザ一覧返却用エンティティ
- * @author ak4ja
- *
+ * 一覧画面で表示する項目をセットする
  */
 
 @Data
@@ -27,10 +26,10 @@ public class UserListEntity {
 	public String birthday;
 
 	// 更新者
-	public String updateDate;
+	public String updateUser;
 
 	// 更新日
-	public String updateUser;
+	public String updateDate;
 
 	// 削除フラグ
 	public String deleteFlg;

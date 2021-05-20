@@ -59,7 +59,7 @@ public class UserController {
 
 		UserDetailResponseEntity user = userService.getUser(id);
 
-		model.addAttribute("list", user.getUser());
+		model.addAttribute("userDetail", user.getUser());
 
 		// src/main/resources/templates/list.html を呼び出す
 		return "detail";
