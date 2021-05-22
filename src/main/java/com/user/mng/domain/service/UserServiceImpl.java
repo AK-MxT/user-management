@@ -12,6 +12,7 @@ import com.user.mng.domain.model.entity.UserListEntity;
 import com.user.mng.domain.model.response.UserDetailResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
 import com.user.mng.domain.repository.TrnUserMapper;
+import com.user.mng.utils.CommonUtils;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -46,10 +47,9 @@ public class UserServiceImpl implements UserService {
 			user.setFirstName(p.getFirstName());
 			user.setGender(UserConstant.GENDER_MAN.equals(p.getGender()) ? UserConstant.GENDER_MAN_VIEW
 					: UserConstant.GENDER_WOMAN_VIEW);
-			// TODO 日付のフォーマッタ作る
-			user.setBirthday(p.getBirthday().toString());
+			user.setBirthday(CommonUtils.formatToDate(p.getBirthday()));
 			user.setUpdateUser(p.getUpdateUser());
-			user.setUpdateDate(p.getUpdateDate().toString());
+			user.setUpdateDate(CommonUtils.formatToDateTime(p.getUpdateDate()));
 			user.setDeleteFlg(p.getDeleteFlg() ? UserConstant.DELETE_FLG_TRUE : UserConstant.DELETE_FLG_FALSE);
 
 			res.getUserList().add(user);
@@ -80,16 +80,16 @@ public class UserServiceImpl implements UserService {
 		detail.setFirstNameKana(result.getFirstNameKana());
 		detail.setGender(UserConstant.GENDER_MAN.equals(result.getGender()) ? UserConstant.GENDER_MAN_VIEW
 				: UserConstant.GENDER_WOMAN_VIEW);
-		// TODO 日付のフォーマッタ作る
-		detail.setBirthday(result.getBirthday().toString());
+		detail.setBirthday(CommonUtils.formatToDate(result.getBirthday()));
 		detail.setPostalCode(result.getPostalCode());
-		detail.setAddress(result.getPrefecture());
+		detail.setAddress(CommonUtils.formatAddress(result.getPrefecture(), result.getAddress1(), result.getAddress2(),
+				result.getAddress3(), result.getAddress4()));
 		detail.setPhoneNumber(result.getPhoneNumber());
 		detail.setRemarks(result.getRemarks());
 		detail.setInsertUser(result.getInsertUser());
-		detail.setInsertDate(result.getInsertDate().toString());
+		detail.setInsertDate(CommonUtils.formatToDateTime(result.getInsertDate()));
 		detail.setUpdateUser(result.getUpdateUser());
-		detail.setUpdateDate(result.getUpdateDate().toString());
+		detail.setUpdateDate(CommonUtils.formatToDateTime(result.getUpdateDate()));
 		detail.setDeleteFlg(result.getDeleteFlg() ? UserConstant.DELETE_FLG_TRUE : UserConstant.DELETE_FLG_FALSE);
 
 		res.setUser(detail);
