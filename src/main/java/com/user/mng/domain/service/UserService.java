@@ -15,4 +15,6 @@ public interface UserService {
 	public UserListResponseEntity getUserList();
 
 	public UserDetailResponseEntity getUser(Long id);
+
+	public void deleteUser(Long id);
 }

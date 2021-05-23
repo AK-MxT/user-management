@@ -96,4 +96,20 @@ public class UserServiceImpl implements UserService {
 
 		return res;
 	}
+
+	/**
+	 * ユーザ削除処理
+	 *
+	 * @param id ユーザID
+	 */
+	@Override
+	public void deleteUser(Long id) {
+
+		// TODO 事前に対象ユーザが存在するかチェック
+
+		// ユーザの削除
+		trnUserMapper.deleteByPrimaryKey(id.intValue());
+
+		// TODO 削除件数が0件だったら例外とする
+	}
 }

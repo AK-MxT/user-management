@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<title>Insert title here</title>
+<!-- 全画面共通のcssを定義します -->
+<!-- <link rel="stylesheet" type="text/css" th:href="@{/css/base.css}" /> -->
+<!-- 各画面専用のcssを定義します -->
+<!-- <th:block th:replace="${links}" /> -->
+<!-- 全画面共通のjavascriptを定義します -->
+<!-- <script type="text/javascript" th:src="@{/scripts/base.js}"></script> -->
+<!-- 各画面専用のjavascriptを定義します -->
+<!-- <th:block th:replace="${scripts}" /> -->
+</head>
+<body>
+	<header th:fragment="header" class="mb-4">
+		<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+			<span class="navbar-brand mb-0 h1">Management System</span>
+		</nav>
+	</header>
+	<footer th:fragment="footer" class="mt-4 bd-footer bg-dark">
+		<div class="container-fluid">
+		  <span style="color: white;">2021-</span>
+		</div>
+	</footer>
+</body>
+</html>

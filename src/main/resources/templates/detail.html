@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html xmlns:th="http://www.thymeleaf.org">
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet"
@@ -9,6 +9,7 @@
 <title>ユーザ詳細</title>
 </head>
 <body>
+	<div th:replace="layout :: header"></div>
 	<div class="container">
 		<h1>ユーザ詳細</h1>
 		<hr>
@@ -33,10 +34,10 @@
 				<th class="table-secondary">誕生日</th>
 				<td th:text="*{birthday}"></td>
 			</tr>
-            <tr>
-                <th class="table-secondary">郵便番号</th>
-                <td th:text="*{postalCode}"></td>
-            </tr>
+			<tr>
+				<th class="table-secondary">郵便番号</th>
+				<td th:text="*{postalCode}"></td>
+			</tr>
 			<tr>
 				<th class="table-secondary">住所</th>
 				<td th:text="*{address}"></td>
@@ -48,18 +49,18 @@
 			<tr>
 				<th class="table-secondary">作成者</th>
 				<td th:text="*{insertUser}"></td>
-            </tr>
-            <tr>
+			</tr>
+			<tr>
 				<th class="table-secondary">作成日</th>
 				<td th:text="*{insertDate}"></td>
 			</tr>
 			<tr>
 				<th class="table-secondary">更新者</th>
 				<td th:text="*{updateUser}"></td>
-            </tr>
-            <tr>
-                <th class="table-secondary">更新日</th>
-                <td th:text="*{updateDate}"></td>
+			</tr>
+			<tr>
+				<th class="table-secondary">更新日</th>
+				<td th:text="*{updateDate}"></td>
 			</tr>
 			<tr>
 				<th class="table-secondary">削除フラグ</th>
@@ -69,10 +70,46 @@
 		<div>
 			<a role="button" class="btn btn-primary btn-sm"
 				th:href="@{/user/{id}/edit(id=*{id})}">編集</a> <a role="button"
-				class="btn btn-secondary btn-sm" href="/user/list">一覧に戻る</a> <a
-				role="button" class="btn btn-danger btn-sm"
-				th:href="@{/user/{id}/delete(id=*{id})}">削除</a>
+				class="btn btn-secondary btn-sm" href="/user/list">一覧に戻る</a>
+			<!-- Button trigger modal -->
+			<button type="button" class="btn btn-danger btn-sm"
+				data-toggle="modal" data-target="#exampleModal">削除</button>
+
+			<!-- Modal -->
+			<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
+				aria-labelledby="exampleModalLabel" aria-hidden="true">
+				<div class="modal-dialog modal-dialog-centered" role="document">
+					<div class="modal-content">
+						<div class="modal-header">
+							<h5 class="modal-title" id="exampleModalLabel">以下のユーザを削除します。よろしいですか？</h5>
+							<button type="button" class="close" data-dismiss="modal"
+								aria-label="Close">
+								<span aria-hidden="true">&times;</span>
+							</button>
+						</div>
+						<div class="modal-body">
+							<table th:object="${userDetail}" class="table">
+								<tr>
+									<th class="table-secondary">ID</th>
+									<td th:text="*{id}"></td>
+								</tr>
+								<tr>
+									<th class="table-secondary">姓名</th>
+									<td th:text="*{lastName} + ' ' + *{firstName}"></td>
+								</tr>
+							</table>
+						</div>
+						<div class="modal-footer">
+							<button type="button" class="btn btn-secondary btn-sm"
+								data-dismiss="modal">キャンセル</button>
+							<a role="button" class="btn btn-danger btn-sm"
+								th:href="@{/user/delete/{id}(id=*{id})}">削除</a>
+						</div>
+					</div>
+				</div>
+			</div>
 		</div>
 	</div>
+	<div th:replace="layout :: footer"></div>
 </body>
 </html>

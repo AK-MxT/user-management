@@ -61,7 +61,24 @@ public class UserController {
 
 		model.addAttribute("userDetail", user.getUser());
 
-		// src/main/resources/templates/list.html を呼び出す
+		// src/main/resources/templates/detail.html を呼び出す
 		return "detail";
+	}
+
+	/**
+	 * ユーザ削除処理
+	 *
+	 * @param id
+	 * @param model
+	 *
+	 * @return ユーザ詳細画面
+	 */
+	@RequestMapping(value = "/delete/{id}")
+	public String delete(@PathVariable Long id, Model model) {
+
+		userService.deleteUser(id);
+
+		// src/main/resources/templates/list.html を呼び出す
+		return "redirect:/user/list";
 	}
 }
