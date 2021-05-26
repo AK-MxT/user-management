@@ -98,6 +98,22 @@ public class UserServiceImpl implements UserService {
 	}
 
 	/**
+	 * ユーザ取得処理（更新用のデータ取得）
+	 *
+	 * @param id ユーザID
+	 *
+	 * @return IDに紐づくユーザ1件
+	 */
+	@Override
+	public TrnUser getUserForEdit(Long id) {
+
+		// ユーザの取得
+		TrnUser result = trnUserMapper.selectByPrimaryKey(id.intValue());
+
+		return result;
+	}
+
+	/**
 	 * ユーザ削除処理
 	 *
 	 * @param id ユーザID

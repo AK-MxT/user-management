@@ -6,6 +6,7 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import com.user.mng.domain.model.TrnUser;
 import com.user.mng.domain.model.response.UserDetailResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
 import com.user.mng.domain.service.UserService;
@@ -16,18 +17,6 @@ public class UserController {
 
 	@Autowired
 	UserService userService;
-
-	@RequestMapping(value = "/test") // URLは、http://localhost:8080/test
-	public String test(Model model) {
-
-		System.out.println(model);
-
-		// viewに表示する res を設定する
-		model.addAttribute("res", "てすと");
-
-		// src/main/resources/templates/test.html を呼び出す
-		return "test";
-	}
 
 	/**
 	 * ユーザ一覧画面
@@ -66,6 +55,26 @@ public class UserController {
 	}
 
 	/**
+	 * ユーザ更新画面
+	 * ユーザ更新のためのデータ取得処理（更新メソッドではない）
+	 *
+	 * @param id
+	 * @param model
+	 *
+	 * @return ユーザ詳細画面
+	 */
+	@RequestMapping(value = "/edit/{id}")
+	public String edit(@PathVariable Long id, Model model) {
+
+		TrnUser user = userService.getUserForEdit(id);
+
+		model.addAttribute("userForEdit", user);
+
+		// src/main/resources/templates/update.html を呼び出す
+		return "update";
+	}
+
+	/**
 	 * ユーザ削除処理
 	 *
 	 * @param id
@@ -78,7 +87,7 @@ public class UserController {
 
 		userService.deleteUser(id);
 
-		// src/main/resources/templates/list.html を呼び出す
+		// 削除後は一覧画面へリダイレクト
 		return "redirect:/user/list";
 	}
 }
