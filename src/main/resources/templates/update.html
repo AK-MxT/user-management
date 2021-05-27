@@ -19,8 +19,8 @@
 			</tr>
 		</table>
 
-		<form th:action="@{/user/update}" th:object="${userForEdit}"
-			th:method="post">
+		<form th:action="@{/user/confirm}" th:object="${userForEdit}"
+			th:method="post" class="container">
 			<input type="hidden" th:field="*{id}" />
 			<div class="form-row">
 				<div class="form-group col-md-6">
@@ -44,7 +44,7 @@
 						placeholder="名">
 				</div>
 			</div>
-			<label for="customRadioInline">性別</label>
+			<label for="customRadioInline">性別</label><br>
 			<div class="custom-control custom-radio custom-control-inline"
 				id="customRadioInline">
 				<input type="radio" id="customRadioInline1"
@@ -52,7 +52,7 @@
 					th:field="*{gender}" value="0"> <label
 					class="custom-control-label" for="customRadioInline1">男性</label>
 			</div>
-			<div class="custom-control custom-radio custom-control-inline">
+			<div class="custom-control custom-radio custom-control-inline mb-3">
 				<input type="radio" id="customRadioInline2"
 					name="customRadioInline1" class="custom-control-input"
 					th:field="*{gender}" value="1"> <label
@@ -64,7 +64,7 @@
 						th:field="*{postalCode}" class="form-control" id="inputPostalCode"
 						placeholder="郵便番号">
 				</div>
-				<div class="form-group col-md-4">
+				<div class="form-group col-md-auto">
 					<label for="inputPrefecture">都道府県</label> <select
 						id="inputPrefecture" class="form-control" th:field="*{prefecture}">
 						<option value="北海道">北海道</option>
@@ -126,21 +126,36 @@
 						th:field="*{address2}" class="form-control" id="inputAddress2"
 						placeholder="町名">
 				</div>
-                <div class="form-group col-md-6">
-                    <label for="inputAddress3">番地</label> <input type="text"
-                        th:field="*{address3}" class="form-control" id="inputAddress3"
-                        placeholder="番地">
+				<div class="form-group col-md-6">
+					<label for="inputAddress3">番地</label> <input type="text"
+						th:field="*{address3}" class="form-control" id="inputAddress3"
+						placeholder="番地">
+				</div>
+				<div class="form-group col-md-6">
+					<label for="inputAddress4">建物名・部屋番号</label> <input type="text"
+						th:field="*{address4}" class="form-control" id="inputAddress4"
+						placeholder="建物名・部屋番号">
+				</div>
+				<div class="form-group col-md-auto">
+					<label for="inputPhoneNumber">電話番号</label> <input type="text"
+						th:field="*{phoneNumber}" class="form-control"
+						id="inputPhoneNumber" placeholder="電話番号">
+				</div>
+                <div class="form-group col-md-12">
+                    <label for="inputRemarks">備考</label> <textarea type="text"
+                        th:field="*{remarks}" class="form-control"
+                        id="inputRemarks" placeholder="備考"></textarea>
                 </div>
-                <div class="form-group col-md-6">
-                    <label for="inputAddress4">建物名・部屋番号</label> <input type="text"
-                        th:field="*{address4}" class="form-control" id="inputAddress4"
-                        placeholder="建物名・部屋番号">
-                </div>
+				<div class="form-group col-md-auto">
+					<label for="inputUpdateUser">更新者</label> <input type="text"
+						th:field="*{updateUser}" class="form-control"
+						id="inputUpdateUser" placeholder="更新者">
+				</div>
 			</div>
 			<div class="btn_area_center">
 				<a th:href="@{/user/detail/{id}(id=*{id})}"
 					class="btn btn-secondary btn-sm">キャンセル</a> <input type="submit"
-					value="保存" class="btn btn-primary btn-sm">
+					value="確認" class="btn btn-primary btn-sm">
 			</div>
 		</form>
 	</div>

@@ -1,12 +1,20 @@
 package com.user.mng.controller;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.ObjectError;
+import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import com.user.mng.domain.model.TrnUser;
+import com.user.mng.domain.model.request.UserConfirmRequestEntity;
 import com.user.mng.domain.model.response.UserDetailResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
 import com.user.mng.domain.service.UserService;
@@ -72,6 +80,34 @@ public class UserController {
 
 		// src/main/resources/templates/update.html を呼び出す
 		return "update";
+	}
+
+	/**
+	 * ユーザ確認画面
+	 * ユーザ登録更新時のチェック処理
+	 *
+	 * @param userConfirmRequest
+	 * @param model
+	 *
+	 * @return ユーザ確認画面
+	 */
+	@RequestMapping(value = "/confirm")
+	public String confirm(@Validated @ModelAttribute UserConfirmRequestEntity userConfirmRequestEntity,
+			BindingResult result, Model model) {
+
+		if (result.hasErrors()) {
+			List<String> errorList = new ArrayList<String>();
+			for (ObjectError error : result.getAllErrors()) {
+				errorList.add(error.getDefaultMessage());
+			}
+			model.addAttribute("validationError", errorList);
+			return "user/edit";
+		}
+
+		// model.addAttribute("userForEdit", user);
+
+		// src/main/resources/templates/update.html を呼び出す
+		return "confirm";
 	}
 
 	/**
