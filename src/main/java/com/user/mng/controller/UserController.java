@@ -101,7 +101,9 @@ public class UserController {
 				errorList.add(error.getDefaultMessage());
 			}
 			model.addAttribute("validationError", errorList);
-			return "user/edit";
+			model.addAttribute("userForEdit", userConfirmRequestEntity);
+
+			return "update";
 		}
 
 		// model.addAttribute("userForEdit", user);
