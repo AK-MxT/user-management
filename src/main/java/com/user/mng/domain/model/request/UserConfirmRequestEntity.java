@@ -70,6 +70,7 @@ public class UserConfirmRequestEntity {
 	// 電話番号
 	@NotEmpty(message = "電話番号は必須項目です")
 	@Size(max = 11, message = "電話番号は11文字以内で入力してください")
+	@Pattern(regexp = "[0-9]+", message = "電話番号の入力値に誤りがあります")
 	private String phoneNumber;
 
 	// 備考

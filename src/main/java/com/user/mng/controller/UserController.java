@@ -106,7 +106,7 @@ public class UserController {
 			return "update";
 		}
 
-		// model.addAttribute("userForEdit", user);
+		model.addAttribute("userForEdit", userConfirmRequestEntity);
 
 		// src/main/resources/templates/update.html を呼び出す
 		return "confirm";

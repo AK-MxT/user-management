@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet"
+	th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" />
+<script th:src="@{/webjars/jquery/3.5.0/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
+<title>ユーザ登録更新確認</title>
+</head>
+<body>
+	<div th:replace="layout :: header"></div>
+	<div class="container">
+		<h2>確認</h2>
+		<hr>
+		<table th:object="${userForEdit}" class="table table-borderd">
+			<tr>
+				<th class="table-secondary">ID</th>
+				<td th:text="*{id}"></td>
+			</tr>
+			<tr>
+				<th class="table-secondary">姓名カナ</th>
+				<td th:text="*{lastNameKana} + ' ' + *{firstNameKana}"></td>
+			</tr>
+			<tr>
+				<th class="table-secondary">姓名</th>
+				<td th:text="*{lastName} + ' ' + *{firstName}"></td>
+			</tr>
+			<tr>
+				<th class="table-secondary">性別</th>
+				<td th:text="*{gender}"></td>
+			</tr>
+			<tr>
+				<th class="table-secondary">誕生日</th>
+				<td th:text="*{birthday}"></td>
+			</tr>
+			<tr>
+				<th class="table-secondary">郵便番号</th>
+				<td th:text="*{postalCode}"></td>
+			</tr>
+			<tr>
+				<th class="table-secondary">都道府県</th>
+				<td th:text="*{prefecture}"></td>
+			</tr>
+            <tr>
+                <th class="table-secondary">市区町村</th>
+                <td th:text="*{address1}"></td>
+            </tr>
+            <tr>
+                <th class="table-secondary">町名</th>
+                <td th:text="*{address2}"></td>
+            </tr>
+            <tr>
+                <th class="table-secondary">番地</th>
+                <td th:text="*{address3}"></td>
+            </tr>
+            <tr>
+                <th class="table-secondary">建物名・部屋番号</th>
+                <td th:text="*{address4}"></td>
+            </tr>
+			<tr>
+				<th class="table-secondary">電話番号</th>
+				<td th:text="*{phoneNumber}"></td>
+			</tr>
+			<tr>
+				<th class="table-secondary">備考</th>
+				<td th:text="*{remarks}"></td>
+			</tr>
+			<tr>
+				<th class="table-secondary">更新者</th>
+				<td th:text="*{updateUser}"></td>
+			</tr>
+		</table>
+		<div>
+			<a role="button" class="btn btn-secondary btn-sm" href="/user/list">キャンセル</a>
+			<a role="button" class="btn btn-primary btn-sm"
+				th:href="@{/user/edit/{id}(id=*{id})}">更新</a>
+		</div>
+	</div>
+	<div th:replace="layout :: footer"></div>
+</body>
+</html>
