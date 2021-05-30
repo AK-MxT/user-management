@@ -9,7 +9,9 @@ import com.user.mng.domain.model.TrnUser;
 import com.user.mng.domain.model.TrnUserExample;
 import com.user.mng.domain.model.entity.UserDetailEntity;
 import com.user.mng.domain.model.entity.UserListEntity;
+import com.user.mng.domain.model.request.UserUpdateRequestEntity;
 import com.user.mng.domain.model.response.UserDetailResponseEntity;
+import com.user.mng.domain.model.response.UserEditResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
 import com.user.mng.domain.repository.TrnUserMapper;
 import com.user.mng.utils.CommonUtils;
@@ -105,12 +107,58 @@ public class UserServiceImpl implements UserService {
 	 * @return IDに紐づくユーザ1件
 	 */
 	@Override
-	public TrnUser getUserForEdit(Long id) {
+	public UserEditResponseEntity getUserForEdit(Long id) {
 
 		// ユーザの取得
 		TrnUser result = trnUserMapper.selectByPrimaryKey(id.intValue());
 
-		return result;
+		UserEditResponseEntity res = new UserEditResponseEntity();
+
+		res.setId(result.getId());
+		res.setLastName(result.getLastName());
+		res.setFirstName(result.getFirstName());
+		res.setLastNameKana(result.getLastNameKana());
+		res.setFirstNameKana(result.getFirstNameKana());
+		res.setGender(result.getGender());
+		res.setBirthday(CommonUtils.formatToDate(result.getBirthday()));
+		res.setPostalCode(result.getPostalCode());
+		res.setPrefecture(result.getPrefecture());
+		res.setAddress1(result.getAddress1());
+		res.setAddress2(result.getAddress2());
+		res.setAddress3(result.getAddress3());
+		res.setAddress4(result.getAddress4());
+		res.setPhoneNumber(result.getPhoneNumber());
+		res.setRemarks(result.getRemarks());
+		res.setInsertUser(result.getInsertUser());
+		res.setInsertDate(CommonUtils.formatToDateTime(result.getInsertDate()));
+		res.setUpdateUser(result.getUpdateUser());
+		res.setUpdateDate(CommonUtils.formatToDateTime(result.getUpdateDate()));
+		res.setDeleteFlg(result.getDeleteFlg() ? UserConstant.DELETE_FLG_TRUE : UserConstant.DELETE_FLG_FALSE);
+
+		return res;
+	}
+
+	/**
+	 * ユーザ更新処理
+	 *
+	 * @param id ユーザID
+	 */
+	@Override
+	public void updateUser(UserUpdateRequestEntity user) {
+		// TODO 自動生成されたメソッド・スタブ
+
+		// 更新値のセット
+		TrnUser record = new TrnUser();
+		record.setId(user.getId());
+		record.setLastNameKana(user.getLastNameKana());
+		record.setFirstNameKana(user.getFirstNameKana());
+		record.setLastName(user.getLastName());
+		record.setFirstName(user.getFirstName());
+		record.setGender(user.getGender());
+//		record.setBirthday(user.getBirthday());
+
+
+		trnUserMapper.updateByPrimaryKey(record);
 	}
 
 	/**

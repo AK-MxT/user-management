@@ -1,18 +1,20 @@
 package com.user.mng.domain.model.request;
 
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import lombok.Data;
 
 /**
- * ユーザ登録更新時確認用リクエストエンティティ
+ * ユーザ更新用リクエストエンティティ
  */
 @Data
-public class UserConfirmRequestEntity {
+public class UserUpdateRequestEntity {
 
 	// ID
+	@NotNull(message = "IDは必須項目です")
 	private Integer id;
 
 	// 姓カナ

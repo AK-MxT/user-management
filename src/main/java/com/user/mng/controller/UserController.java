@@ -13,9 +13,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
-import com.user.mng.domain.model.TrnUser;
 import com.user.mng.domain.model.request.UserConfirmRequestEntity;
+import com.user.mng.domain.model.request.UserUpdateRequestEntity;
 import com.user.mng.domain.model.response.UserDetailResponseEntity;
+import com.user.mng.domain.model.response.UserEditResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
 import com.user.mng.domain.service.UserService;
 
@@ -74,7 +75,7 @@ public class UserController {
 	@RequestMapping(value = "/edit/{id}")
 	public String edit(@PathVariable Long id, Model model) {
 
-		TrnUser user = userService.getUserForEdit(id);
+		UserEditResponseEntity user = userService.getUserForEdit(id);
 
 		model.addAttribute("userForEdit", user);
 
@@ -86,7 +87,7 @@ public class UserController {
 	 * ユーザ確認画面
 	 * ユーザ登録更新時のチェック処理
 	 *
-	 * @param userConfirmRequest
+	 * @param userConfirmRequestEntity
 	 * @param model
 	 *
 	 * @return ユーザ確認画面
@@ -110,6 +111,36 @@ public class UserController {
 
 		// src/main/resources/templates/update.html を呼び出す
 		return "confirm";
+	}
+
+	/**
+	 * ユーザ更新
+	 * ユーザ登録更新時のチェック処理
+	 *
+	 * @param userUpdateRequestEntity
+	 * @param model
+	 *
+	 * @return ユーザ一覧画面
+	 */
+	@RequestMapping(value = "/update")
+	public String update(@Validated @ModelAttribute UserUpdateRequestEntity userUpdateRequestEntity,
+			BindingResult result, Model model) {
+
+		if (result.hasErrors()) {
+			List<String> errorList = new ArrayList<String>();
+			for (ObjectError error : result.getAllErrors()) {
+				errorList.add(error.getDefaultMessage());
+			}
+			model.addAttribute("validationError", errorList);
+			model.addAttribute("userForEdit", userUpdateRequestEntity);
+
+			return "update";
+		}
+
+
+
+		// src/main/resources/templates/list.html を呼び出す
+		return "list";
 	}
 
 	/**
