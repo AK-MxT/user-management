@@ -1,5 +1,6 @@
 package com.user.mng.domain.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.stereotype.Service;
@@ -145,7 +146,12 @@ public class UserServiceImpl implements UserService {
 	 */
 	@Override
 	public void updateUser(UserUpdateRequestEntity user) {
-		// TODO 自動生成されたメソッド・スタブ
+
+		// システム日時
+		Date now = new Date();
+
+		TrnUserExample filter = new TrnUserExample();
+		filter.createCriteria().andIdEqualTo(user.getId());
 
 		// 更新値のセット
 		TrnUser record = new TrnUser();
@@ -155,10 +161,22 @@ public class UserServiceImpl implements UserService {
 		record.setLastName(user.getLastName());
 		record.setFirstName(user.getFirstName());
 		record.setGender(user.getGender());
-//		record.setBirthday(user.getBirthday());
+		record.setBirthday(CommonUtils.formatStrToDate(user.getBirthday()));
+		record.setPostalCode(user.getPostalCode());
+		record.setPrefecture(user.getPrefecture());
+		record.setAddress1(user.getAddress1());
+		record.setAddress2(user.getAddress2());
+		record.setAddress3(user.getAddress3());
+		record.setAddress4(user.getAddress4());
+		record.setPhoneNumber(user.getPhoneNumber());
+		record.setRemarks(user.getRemarks());
+		record.setUpdateUser(user.getUpdateUser());
+		record.setUpdateDate(now);
 
+		// ユーザを更新
+		int cnt = trnUserMapper.updateByExampleSelective(record, filter);
 
-		trnUserMapper.updateByPrimaryKey(record);
+		// TODO 更新件数が1件でなければExceptionとする
 	}
 
 	/**

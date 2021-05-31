@@ -1,5 +1,6 @@
 package com.user.mng.utils;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
@@ -35,6 +36,26 @@ public final class CommonUtils {
 		String result = df.format(date);
 
 		return result;
+	}
+
+	/**
+	 * 文字列の日付（yyyy/mm/dd）をフォーマットする
+	 *
+	 * @param strDate
+	 * @return Date型
+	 */
+	public static Date formatStrToDate (String strDate) {
+		SimpleDateFormat df = new SimpleDateFormat("yyyy/MM/dd");
+
+		Date date = new Date();
+		try {
+			date = df.parse(strDate);
+		} catch (ParseException e) {
+			// TODO 自動生成された catch ブロック
+			e.printStackTrace();
+		}
+
+		return date;
 	}
 
 	public static String formatAddress (String prefecture, String add1, String add2, String add3, String add4) {

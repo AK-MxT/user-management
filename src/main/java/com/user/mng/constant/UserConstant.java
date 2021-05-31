@@ -12,6 +12,11 @@ public final class UserConstant {
 	public static final String DELETE_FLG_FALSE = "未削除";
 	public static final String DELETE_FLG_TRUE = "削除済";
 
+
+	// メッセージ系
+	public static final String UPDATE_SUCCESS = "ユーザの更新が完了しました。";
+	public static final String DELETE_SUCCESS = "ユーザを削除しました。";
+
 	private UserConstant() {
 	}
 }

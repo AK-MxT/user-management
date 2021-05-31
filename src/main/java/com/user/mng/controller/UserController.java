@@ -12,7 +12,9 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.user.mng.constant.UserConstant;
 import com.user.mng.domain.model.request.UserConfirmRequestEntity;
 import com.user.mng.domain.model.request.UserUpdateRequestEntity;
 import com.user.mng.domain.model.response.UserDetailResponseEntity;
@@ -115,7 +117,6 @@ public class UserController {
 
 	/**
 	 * ユーザ更新
-	 * ユーザ登録更新時のチェック処理
 	 *
 	 * @param userUpdateRequestEntity
 	 * @param model
@@ -124,7 +125,7 @@ public class UserController {
 	 */
 	@RequestMapping(value = "/update")
 	public String update(@Validated @ModelAttribute UserUpdateRequestEntity userUpdateRequestEntity,
-			BindingResult result, Model model) {
+			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 
 		if (result.hasErrors()) {
 			List<String> errorList = new ArrayList<String>();
@@ -137,10 +138,13 @@ public class UserController {
 			return "update";
 		}
 
+		// ユーザ更新処理
+		userService.updateUser(userUpdateRequestEntity);
 
+		redirectAttributes.addFlashAttribute("information", UserConstant.UPDATE_SUCCESS);
 
-		// src/main/resources/templates/list.html を呼び出す
-		return "list";
+		// 更新後は一覧画面へリダイレクト
+		return "redirect:/user/list";
 	}
 
 	/**
@@ -152,9 +156,11 @@ public class UserController {
 	 * @return ユーザ詳細画面
 	 */
 	@RequestMapping(value = "/delete/{id}")
-	public String delete(@PathVariable Long id, Model model) {
+	public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
 
 		userService.deleteUser(id);
+
+		redirectAttributes.addFlashAttribute("information", UserConstant.DELETE_SUCCESS);
 
 		// 削除後は一覧画面へリダイレクト
 		return "redirect:/user/list";

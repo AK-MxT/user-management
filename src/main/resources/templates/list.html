@@ -11,6 +11,13 @@
 <body>
     <div th:replace="layout :: header"></div>
 	<div class="container">
+		<!-- アラート表示部分 -->
+		<div th:if="${information}">
+			<div id="auto-del-alert" class="alert alert-success" role="alert">
+				<div th:text="${information}"></div>
+			</div>
+		</div>
+
 		<h2>ユーザ一覧</h2>
 		<hr>
 		<table class="table table-borderd table-striped">
@@ -39,5 +46,12 @@
 		</table>
 	</div>
 	<div th:replace="layout :: footer"></div>
+	<script>
+		window.setTimeout(function() {
+			$("#auto-del-alert").fadeTo(500, 0).slideUp(500, function() {
+				$(this).remove();
+			});
+		}, 2000);
+	</script>
 </body>
 </html>

@@ -15,6 +15,23 @@
 		<hr>
 		<h5>以下の内容で更新します。よろしいですか？</h5>
 		<form th:action="@{/user/update}" th:object="${userForEdit}" th:method="post">
+		 	<input type="hidden" th:field="*{id}">
+		 	<input type="hidden" th:field="*{lastNameKana}">
+		 	<input type="hidden" th:field="*{firstNameKana}">
+		 	<input type="hidden" th:field="*{lastName}">
+		 	<input type="hidden" th:field="*{firstName}">
+		 	<input type="hidden" th:field="*{gender}">
+		 	<input type="hidden" th:field="*{birthday}">
+		 	<input type="hidden" th:field="*{postalCode}">
+		 	<input type="hidden" th:field="*{prefecture}">
+		 	<input type="hidden" th:field="*{address1}">
+		 	<input type="hidden" th:field="*{address2}">
+		 	<input type="hidden" th:field="*{address3}">
+		 	<input type="hidden" th:field="*{address4}">
+		 	<input type="hidden" th:field="*{phoneNumber}">
+		 	<input type="hidden" th:field="*{remarks}">
+		 	<input type="hidden" th:field="*{updateUser}">
+
 			<table class="table table-borderd">
 				<tr>
 					<th class="table-secondary">ID</th>
