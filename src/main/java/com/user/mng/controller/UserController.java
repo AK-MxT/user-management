@@ -2,6 +2,7 @@ package com.user.mng.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -16,7 +17,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.user.mng.constant.UserConstant;
 import com.user.mng.domain.model.request.UserConfirmRequestEntity;
-import com.user.mng.domain.model.request.UserUpdateRequestEntity;
+import com.user.mng.domain.model.request.UserEditRequestEntity;
 import com.user.mng.domain.model.response.UserDetailResponseEntity;
 import com.user.mng.domain.model.response.UserEditResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
@@ -79,10 +80,29 @@ public class UserController {
 
 		UserEditResponseEntity user = userService.getUserForEdit(id);
 
+		model.addAttribute("title", UserConstant.TITLE_UPDATE);
 		model.addAttribute("userForEdit", user);
 
-		// src/main/resources/templates/update.html を呼び出す
-		return "update";
+		// src/main/resources/templates/edit.html を呼び出す
+		return "edit";
+	}
+
+	/**
+	 * ユーザ登録画面
+	 * ユーザ登録のためのエンティティセット処理（登録メソッドではない）
+	 *
+	 * @param model
+	 *
+	 * @return ユーザ登録画面
+	 */
+	@RequestMapping(value = "/new")
+	public String register(Model model) {
+
+		model.addAttribute("title", UserConstant.TITLE_REGISTER);
+		model.addAttribute("userForEdit", new UserEditRequestEntity());
+
+		// src/main/resources/templates/edit.html を呼び出す
+		return "edit";
 	}
 
 	/**
@@ -98,6 +118,12 @@ public class UserController {
 	public String confirm(@Validated @ModelAttribute UserConfirmRequestEntity userConfirmRequestEntity,
 			BindingResult result, Model model) {
 
+		if (Objects.isNull(userConfirmRequestEntity.getId())) {
+			model.addAttribute("title", UserConstant.TITLE_REGISTER);
+		} else {
+			model.addAttribute("title", UserConstant.TITLE_UPDATE);
+		}
+
 		if (result.hasErrors()) {
 			List<String> errorList = new ArrayList<String>();
 			for (ObjectError error : result.getAllErrors()) {
@@ -106,7 +132,7 @@ public class UserController {
 			model.addAttribute("validationError", errorList);
 			model.addAttribute("userForEdit", userConfirmRequestEntity);
 
-			return "update";
+			return "edit";
 		}
 
 		model.addAttribute("userForEdit", userConfirmRequestEntity);
@@ -124,7 +150,7 @@ public class UserController {
 	 * @return ユーザ一覧画面
 	 */
 	@RequestMapping(value = "/update")
-	public String update(@Validated @ModelAttribute UserUpdateRequestEntity userUpdateRequestEntity,
+	public String update(@Validated @ModelAttribute UserEditRequestEntity userEditRequestEntity,
 			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 
 		if (result.hasErrors()) {
@@ -132,16 +158,50 @@ public class UserController {
 			for (ObjectError error : result.getAllErrors()) {
 				errorList.add(error.getDefaultMessage());
 			}
+			model.addAttribute("title", UserConstant.TITLE_UPDATE);
 			model.addAttribute("validationError", errorList);
-			model.addAttribute("userForEdit", userUpdateRequestEntity);
+			model.addAttribute("userForEdit", userEditRequestEntity);
 
-			return "update";
+			return "edit";
 		}
 
 		// ユーザ更新処理
-		userService.updateUser(userUpdateRequestEntity);
+		userService.updateUser(userEditRequestEntity);
 
 		redirectAttributes.addFlashAttribute("information", UserConstant.UPDATE_SUCCESS);
+
+		// 更新後は一覧画面へリダイレクト
+		return "redirect:/user/list";
+	}
+
+	/**
+	 * ユーザ登録
+	 *
+	 * @param userUpdateRequestEntity
+	 * @param model
+	 *
+	 * @return ユーザ一覧画面
+	 */
+	@RequestMapping(value = "/insert")
+	public String insert(@Validated @ModelAttribute UserEditRequestEntity userEditRequestEntity,
+			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
+
+		if (result.hasErrors()) {
+			List<String> errorList = new ArrayList<String>();
+			for (ObjectError error : result.getAllErrors()) {
+				errorList.add(error.getDefaultMessage());
+			}
+			model.addAttribute("title", UserConstant.TITLE_REGISTER);
+			model.addAttribute("validationError", errorList);
+			model.addAttribute("userForEdit", userEditRequestEntity);
+
+			return "edit";
+		}
+
+		// ユーザ登録処理
+		userService.insertUser(userEditRequestEntity);
+
+		redirectAttributes.addFlashAttribute("information", UserConstant.REGISTER_SUCCESS);
 
 		// 更新後は一覧画面へリダイレクト
 		return "redirect:/user/list";

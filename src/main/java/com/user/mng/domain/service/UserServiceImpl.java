@@ -3,6 +3,7 @@ package com.user.mng.domain.service;
 import java.util.Date;
 import java.util.List;
 
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.stereotype.Service;
 
 import com.user.mng.constant.UserConstant;
@@ -10,7 +11,7 @@ import com.user.mng.domain.model.TrnUser;
 import com.user.mng.domain.model.TrnUserExample;
 import com.user.mng.domain.model.entity.UserDetailEntity;
 import com.user.mng.domain.model.entity.UserListEntity;
-import com.user.mng.domain.model.request.UserUpdateRequestEntity;
+import com.user.mng.domain.model.request.UserEditRequestEntity;
 import com.user.mng.domain.model.response.UserDetailResponseEntity;
 import com.user.mng.domain.model.response.UserEditResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
@@ -145,7 +146,7 @@ public class UserServiceImpl implements UserService {
 	 * @param id ユーザID
 	 */
 	@Override
-	public void updateUser(UserUpdateRequestEntity user) {
+	public void updateUser(UserEditRequestEntity user) {
 
 		// システム日時
 		Date now = new Date();
@@ -193,5 +194,39 @@ public class UserServiceImpl implements UserService {
 		trnUserMapper.deleteByPrimaryKey(id.intValue());
 
 		// TODO 削除件数が0件だったら例外とする
+	}
+
+	@Override
+	public void insertUser(UserEditRequestEntity user) {
+
+		// システム日時
+		Date now = new Date();
+
+		// 更新値のセット
+		TrnUser record = new TrnUser();
+
+		record.setLastNameKana(user.getLastNameKana());
+		record.setFirstNameKana(user.getFirstNameKana());
+		record.setLastName(user.getLastName());
+		record.setFirstName(user.getFirstName());
+		record.setGender(user.getGender());
+		record.setBirthday(CommonUtils.formatStrToDate(user.getBirthday()));
+		record.setPostalCode(user.getPostalCode());
+		record.setPrefecture(user.getPrefecture());
+		record.setAddress1(user.getAddress1());
+		record.setAddress2(user.getAddress2());
+		record.setAddress3(user.getAddress3());
+		record.setAddress4(user.getAddress4());
+		record.setPhoneNumber(user.getPhoneNumber());
+		record.setRemarks(user.getRemarks());
+		record.setInsertUser(
+				StringUtils.isEmpty(user.getInsertUser()) ? UserConstant.DEFAULT_USERNAME : user.getInsertUser());
+		record.setInsertDate(now);
+		record.setUpdateUser(
+				StringUtils.isEmpty(user.getInsertUser()) ? UserConstant.DEFAULT_USERNAME : user.getInsertUser());
+		record.setUpdateDate(now);
+
+		// ユーザを登録
+		int cnt = trnUserMapper.insert(record);
 	}
 }

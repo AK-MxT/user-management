@@ -3,7 +3,7 @@
  */
 package com.user.mng.domain.service;
 
-import com.user.mng.domain.model.request.UserUpdateRequestEntity;
+import com.user.mng.domain.model.request.UserEditRequestEntity;
 import com.user.mng.domain.model.response.UserDetailResponseEntity;
 import com.user.mng.domain.model.response.UserEditResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
@@ -20,7 +20,9 @@ public interface UserService {
 
 	public UserEditResponseEntity getUserForEdit(Long id);
 
-	public void updateUser(UserUpdateRequestEntity user);
+	public void insertUser(UserEditRequestEntity user);
+
+	public void updateUser(UserEditRequestEntity user);
 
 	public void deleteUser(Long id);
 }

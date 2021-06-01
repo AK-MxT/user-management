@@ -1,20 +1,18 @@
 package com.user.mng.domain.model.request;
 
 import javax.validation.constraints.NotEmpty;
-import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import lombok.Data;
 
 /**
- * ユーザ更新用リクエストエンティティ
+ * ユーザ登録更新用リクエストエンティティ
  */
 @Data
-public class UserUpdateRequestEntity {
+public class UserEditRequestEntity {
 
 	// ID
-	@NotNull(message = "IDは必須項目です")
 	private Integer id;
 
 	// 姓カナ
@@ -83,6 +81,10 @@ public class UserUpdateRequestEntity {
 	// 備考
 	@Size(max = 400, message = "備考は400文字以内で入力してください")
 	private String remarks;
+
+	// 登録者
+	@Size(max = 45, message = "登録者は45文字以内で入力してください")
+	private String insertUser;
 
 	// 更新者
 	@Size(max = 45, message = "更新者は45文字以内で入力してください")

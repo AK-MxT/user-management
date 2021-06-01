@@ -12,8 +12,17 @@ public final class UserConstant {
 	public static final String DELETE_FLG_FALSE = "未削除";
 	public static final String DELETE_FLG_TRUE = "削除済";
 
+	// 登録者・更新者のデフォルト値
+	public static final String DEFAULT_USERNAME = "system";
 
-	// メッセージ系
+	// 可変Title系
+	public static final String TITLE_REGISTER = "ユーザ登録";
+	public static final String TITLE_UPDATE = "ユーザ更新";
+	public static final String TITLE_REGISTER_CONFIRM = "ユーザ登録確認";
+	public static final String TITLE_UPDATE_CONFIRM = "ユーザ更新確認";
+
+	// アラートメッセージ系
+	public static final String REGISTER_SUCCESS = "ユーザの登録が完了しました。";
 	public static final String UPDATE_SUCCESS = "ユーザの更新が完了しました。";
 	public static final String DELETE_SUCCESS = "ユーザを削除しました。";
 
