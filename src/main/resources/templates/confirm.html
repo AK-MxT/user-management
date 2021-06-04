@@ -6,15 +6,15 @@
 	th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" />
 <script th:src="@{/webjars/jquery/3.5.0/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
-<title>ユーザ登録更新確認</title>
+<title th:text="${title}">ユーザ登録更新確認</title>
 </head>
 <body>
 	<div th:replace="layout :: header"></div>
 	<div class="container">
-		<h2>確認</h2>
+		<h2 th:text="${title}">ユーザ登録更新確認</h2>
 		<hr>
 		<h5>以下の内容で更新します。よろしいですか？</h5>
-		<form th:action="@{/user/update}" th:object="${userForEdit}" th:method="post">
+		<form th:action="@{${userForEdit.id} == null ? '/user/insert' : '/user/update'}" th:object="${userForEdit}" th:method="post">
 		 	<input type="hidden" th:field="*{id}">
 		 	<input type="hidden" th:field="*{lastNameKana}">
 		 	<input type="hidden" th:field="*{firstNameKana}">
@@ -33,7 +33,7 @@
 		 	<input type="hidden" th:field="*{updateUser}">
 
 			<table class="table table-borderd">
-				<tr>
+				<tr th:if="*{id}">
 					<th class="table-secondary">ID</th>
 					<td th:text="*{id}"></td>
 				</tr>
@@ -86,6 +86,10 @@
 					<td th:text="*{remarks}"></td>
 				</tr>
 				<tr>
+					<th class="table-secondary">登録者</th>
+					<td th:text="*{insertUser}"></td>
+				</tr>
+				<tr th:if="*{id}">
 					<th class="table-secondary">更新者</th>
 					<td th:text="*{updateUser}"></td>
 				</tr>
@@ -94,7 +98,7 @@
 				<a role="button" class="btn btn-secondary btn-sm"
 					th:href="@{/user/edit/{id}(id=*{id})}">キャンセル</a>
 				<input type="submit"
-                    value="更新" class="btn btn-primary btn-sm">
+                    th:value="*{id} == null ? '登録' : '更新'" class="btn btn-primary btn-sm">
 			</div>
 		</form>
 	</div>

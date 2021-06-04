@@ -227,6 +227,6 @@ public class UserServiceImpl implements UserService {
 		record.setUpdateDate(now);
 
 		// ユーザを登録
-		int cnt = trnUserMapper.insert(record);
+		int cnt = trnUserMapper.insertSelective(record);
 	}
 }

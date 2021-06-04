@@ -82,6 +82,10 @@ public class UserConfirmRequestEntity {
 	@Size(max = 400, message = "備考は400文字以内で入力してください")
 	private String remarks;
 
+	// 登録者
+	@Size(max = 45, message = "登録者は45文字以内で入力してください")
+	private String insertUser;
+
 	// 更新者
 	@Size(max = 45, message = "更新者は45文字以内で入力してください")
 	private String updateUser;
