@@ -1,5 +1,8 @@
 package com.user.mng.constant;
 
+/**
+ * Userサービスまわりの定数クラス
+ */
 public final class UserConstant {
 
 	// 性別
