@@ -1,4 +1,4 @@
-package com.user.mng.domain.service;
+package com.user.mng.domain.model.entity;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -10,14 +10,18 @@ import org.springframework.security.core.userdetails.UserDetails;
 import com.user.mng.constant.AuthConstant;
 import com.user.mng.domain.model.TrnAccount;
 
-public class AccountServiceImpl implements UserDetails {
+/**
+ * Spring Security用のエンティティ
+ * 認証で利用するアカウントデータを扱う
+ */
+public class AccountEntity implements UserDetails {
 
 	// アカウントテーブル
 	private TrnAccount account;
 
 	private Collection<GrantedAuthority> authorities;
 
-	public AccountServiceImpl(TrnAccount account) {
+	public AccountEntity(TrnAccount account) {
 		this.account = account;
 		this.authorities = new ArrayList<>();
 		this.authorities.add(

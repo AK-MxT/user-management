@@ -9,6 +9,8 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.crypto.factory.PasswordEncoderFactories;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
+import com.user.mng.constant.AuthConstant;
+
 @Configuration
 @EnableWebSecurity
 class SecurityConfig extends WebSecurityConfigurerAdapter {
@@ -23,11 +25,11 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.inMemoryAuthentication()
 			.withUser("user")
 			.password(encoder.encode("password"))
-			.roles("USER")
+			.roles(AuthConstant.ROLE_USER)
 			.and()
 			.withUser("admin")
 			.password(encoder.encode("password"))
-			.roles("USER", "ADMIN");
+			.roles(AuthConstant.ROLE_ADMIN);
 	}
 
 	/**
