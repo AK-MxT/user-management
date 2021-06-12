@@ -2,6 +2,7 @@ package com.user.mng.domain.service;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -9,21 +10,21 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.factory.PasswordEncoderFactories;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.thymeleaf.util.StringUtils;
 
 import com.user.mng.constant.AuthConstant;
-import com.user.mng.domain.repository.TrnUserMapper;
+import com.user.mng.domain.model.TrnAccount;
+import com.user.mng.domain.model.TrnAccountExample;
+import com.user.mng.domain.repository.TrnAccountMapper;
 
 @Service
 public class LoginServiceImpl implements UserDetailsService {
 
-	private final TrnUserMapper trnUserMapper;
+	private final TrnAccountMapper trnAccountMapper;
 
-	public LoginServiceImpl(TrnUserMapper trnUserMapper) {
-		this.trnUserMapper = trnUserMapper;
+	public LoginServiceImpl(TrnAccountMapper trnAccountMapper) {
+		this.trnAccountMapper = trnAccountMapper;
 	}
 
 	@Override
@@ -33,16 +34,31 @@ public class LoginServiceImpl implements UserDetailsService {
 			throw new UsernameNotFoundException("username is empty.");
 		}
 
+		// 検索条件
+		TrnAccountExample filter = new TrnAccountExample();
+		filter.createCriteria().andUserNameEqualTo(username).andDeleteFlgEqualTo(Boolean.FALSE);
+
+		List<TrnAccount> accountList = trnAccountMapper.selectByExample(filter);
+
+		if (accountList.size() != 1) {
+			// 取得結果が1件でない場合、エラー
+			throw new UsernameNotFoundException("username is not unique.");
+		}
+
+		TrnAccount account = accountList.get(0);
+
 		// パスワードの設定
-		PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-		String password = encoder.encode("adminpassword");
+		//		PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
+		//		String password = encoder.encode("adminpassword");
 
 		// 権限の設定
 		Collection<GrantedAuthority> authorities = new ArrayList<>();
-		authorities.add(new SimpleGrantedAuthority(AuthConstant.ROLE_ADMIN));
+		authorities.add(
+				new SimpleGrantedAuthority(account.getAdminFlg() ? AuthConstant.ROLE_ADMIN : AuthConstant.ROLE_USER));
 
 		// ユーザー情報を作成
-		User user = new User(username, password, authorities);
+		User user = new User(account.getUserName(), account.getPassword(), authorities);
+
 		return user;
 	}
 
