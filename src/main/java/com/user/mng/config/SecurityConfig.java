@@ -1,12 +1,15 @@
 package com.user.mng.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.builders.WebSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.user.mng.domain.service.LoginServiceImpl;
 
@@ -17,10 +20,16 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 	@Autowired
 	LoginServiceImpl service;
 
+    /**
+     * DBでユーザ認証を行うための処理
+     *
+     * @param auth 認証マネージャー生成ツール
+     * @throws Exception
+     */
 	@Override
 	protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-		// DB認証
-		auth.userDetailsService(service);
+		// DB認証（パスワードはBCryptで暗号化）
+		auth.userDetailsService(service).passwordEncoder(passwordEncoder());
 	}
 
 	/**
@@ -55,8 +64,8 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 				//ログインエラー時の遷移先 ※パラメーターに「error」を付与
 				.failureUrl("/login?error")
 				.defaultSuccessUrl("/user/list")
-				//ログイン時のキー：名前
-				.usernameParameter("name")
+				//ログイン時のキー：ユーザ名
+				.usernameParameter("id")
 				//ログイン時のパスワード
 				.passwordParameter("password")
 			.and()
@@ -65,4 +74,12 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.logoutSuccessUrl("/login");
 		;
 	}
+
+	/**
+	 * パスワードをBCryptで暗号化するクラス
+	 */
+    @Bean
+    public PasswordEncoder passwordEncoder() {
+        return new BCryptPasswordEncoder();
+    }
 }

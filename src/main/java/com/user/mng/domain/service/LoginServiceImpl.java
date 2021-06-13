@@ -6,7 +6,6 @@ import java.util.List;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -16,6 +15,7 @@ import org.thymeleaf.util.StringUtils;
 import com.user.mng.constant.AuthConstant;
 import com.user.mng.domain.model.TrnAccount;
 import com.user.mng.domain.model.TrnAccountExample;
+import com.user.mng.domain.model.entity.AccountEntity;
 import com.user.mng.domain.repository.TrnAccountMapper;
 
 @Service
@@ -45,21 +45,14 @@ public class LoginServiceImpl implements UserDetailsService {
 			throw new UsernameNotFoundException("username is not unique.");
 		}
 
+		// 取得したユーザをセット
 		TrnAccount account = accountList.get(0);
-
-		// パスワードの設定
-		//		PasswordEncoder encoder = PasswordEncoderFactories.createDelegatingPasswordEncoder();
-		//		String password = encoder.encode("adminpassword");
 
 		// 権限の設定
 		Collection<GrantedAuthority> authorities = new ArrayList<>();
 		authorities.add(
 				new SimpleGrantedAuthority(account.getAdminFlg() ? AuthConstant.ROLE_ADMIN : AuthConstant.ROLE_USER));
 
-		// ユーザー情報を作成
-		User user = new User(account.getUserName(), account.getPassword(), authorities);
-
-		return user;
+		return new AccountEntity(account);
 	}
-
 }
