@@ -51,8 +51,9 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 	protected void configure(HttpSecurity http) throws Exception {
 		http
 			.authorizeRequests()
-				//「login.html」はログイン不要でアクセス可能に設定
-				.antMatchers("/login").permitAll()
+				//「login.html / signup.html」はログイン不要でアクセス可能に設定
+				// 「/register」はアカウント登録用のAPIのURIなので許可する
+				.antMatchers("/login", "/signup", "/register").permitAll()
 				//上記以外は直リンク禁止
 				.anyRequest().authenticated()
 			.and()
@@ -72,7 +73,6 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 			.logout()
 				//ログアウト時の遷移先 POSTでアクセス
 				.logoutSuccessUrl("/login");
-		;
 	}
 
 	/**
