@@ -9,6 +9,8 @@ public final class AuthConstant {
 	public static final String ROLE_USER = "USER";
 	public static final String ROLE_ADMIN = "ADMIN";
 
+	// アラートメッセージ系
+	public static final String REGISTER_SUCCESS = "アカウントの登録が完了しました。";
 
 	private AuthConstant() {
 	}

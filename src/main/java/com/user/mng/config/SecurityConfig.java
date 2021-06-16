@@ -66,7 +66,7 @@ class SecurityConfig extends WebSecurityConfigurerAdapter {
 				.failureUrl("/login?error")
 				.defaultSuccessUrl("/user/list")
 				//ログイン時のキー：ユーザ名
-				.usernameParameter("id")
+				.usernameParameter("userName")
 				//ログイン時のパスワード
 				.passwordParameter("password")
 			.and()

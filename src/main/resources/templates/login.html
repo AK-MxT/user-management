@@ -21,7 +21,12 @@
 				</button>
 			</div>
 		</div>
-		<form th:action="@{/register}" th:object="${userForEdit}" method="post">
+		<div th:if="${information}">
+			<div id="auto-del-alert" class="alert alert-success" role="alert">
+				<div th:text="${information}"></div>
+			</div>
+		</div>
+		<form th:action="@{/login}" th:object="${userForEdit}" method="post">
 			<div class="row justify-content-center">
 				<div class="col-6 align-content-center">
 					<div class="card">
@@ -30,7 +35,7 @@
 						</div>
 						<div class="card-body form-row">
 							<label for="id">ユーザ名</label>
-							<input class="form-control form-group" type="text" id="id" name="id" placeholder="ユーザ名" />
+							<input class="form-control form-group" type="text" id="id" name="userName" placeholder="ユーザ名" />
 							<label for="password">パスワード</label>
 							<input class="form-control form-group" type="password" id="password" name="password" placeholder="パスワード" />
 							<div class="justify-center">
@@ -43,5 +48,12 @@
 			</div>
 		</form>
 	</div>
+	<script>
+		window.setTimeout(function() {
+			$("#auto-del-alert").fadeTo(500, 0).slideUp(500, function() {
+				$(this).remove();
+			});
+		}, 2000);
+	</script>
 </body>
 </html>

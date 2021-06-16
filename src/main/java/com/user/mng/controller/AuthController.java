@@ -12,7 +12,9 @@ import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
+import com.user.mng.constant.AuthConstant;
 import com.user.mng.domain.model.request.AccountRegisterRequestEntity;
 import com.user.mng.domain.service.LoginServiceImpl;
 
@@ -43,7 +45,8 @@ public class AuthController {
 	 * @return アカウント登録画面
 	 */
 	@RequestMapping(value = "/signup")
-	public String signup() {
+	public String signup(Model model) {
+		model.addAttribute("userForEdit", new AccountRegisterRequestEntity());
 		return "signup";
 	}
 
@@ -55,7 +58,7 @@ public class AuthController {
 	 */
 	@RequestMapping(value = "/register")
 	public String register(@Validated @ModelAttribute AccountRegisterRequestEntity accountRegisterRequestEntity,
-			BindingResult result, Model model) {
+			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 
 		if (result.hasErrors()) {
 			List<String> errorList = new ArrayList<String>();
@@ -68,10 +71,11 @@ public class AuthController {
 			return "signup";
 		}
 
-		// TODO ↑リクエストエンティティ作る・バリデーションも作る
 		loginServiceImpl.registerAccount(accountRegisterRequestEntity.getUserName(),
 				passwordEncorder.encode(accountRegisterRequestEntity.getPassword()));
 
-		return "login";
+		redirectAttributes.addFlashAttribute("information", AuthConstant.REGISTER_SUCCESS);
+
+		return "redirect:/login";
 	}
 }

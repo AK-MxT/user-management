@@ -20,6 +20,6 @@ public class AccountRegisterRequestEntity {
 	// パスワード
 	@NotEmpty(message = "パスワードは必須項目です")
 	@Size(min = 8, max = 32, message = "パスワードは8文字以上32文字以内で入力してください")
-	@Pattern(regexp = "/^[0-9a-zA-Z]*$/", message = "パスワードは半角英数字のみで入力してください")
+	@Pattern(regexp = "^[0-9a-zA-Z]*$", message = "パスワードは半角英数字のみで入力してください")
 	private String password;
 }

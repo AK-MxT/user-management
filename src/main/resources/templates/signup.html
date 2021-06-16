@@ -30,9 +30,9 @@
 						</div>
 						<div class="card-body form-row">
 							<label for="id">ユーザ名</label>
-							<input class="form-control form-group" type="text" id="id" name="id" placeholder="ユーザ名" />
+							<input class="form-control form-group" th:field="*{userName}" type="text" id="id" name="userName" placeholder="ユーザ名" />
 							<label for="password">パスワード</label>
-							<input class="form-control form-group" type="password" id="password" name="password" placeholder="パスワード" />
+							<input class="form-control form-group" th:field="*{password}" type="password" id="password" name="password" placeholder="パスワード" />
 							<div class="justify-center">
 								<button class="btn btn-danger btn-md" type="submit">新規登録</button>
 								<a role="button" class="btn btn-link btn-md" href="/login">ログイン画面へ</a>
