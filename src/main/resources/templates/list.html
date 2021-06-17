@@ -17,10 +17,63 @@
 				<div th:text="${information}"></div>
 			</div>
 		</div>
-
-		<h2>ユーザ一覧</h2>
-		<a role="button" class="btn btn-secondary btn-sm" th:href="@{/user/new}">新規登録（仮）</a>
+		<div class="row">
+			<div class="col-6">
+				<h2>ユーザ一覧</h2>
+			</div>
+			<div class="col-6 text-right">
+				<a role="button" class="btn btn-secondary btn-sm" th:href="@{/user/new}">ユーザ登録</a>
+			</div>
+		</div>
 		<hr>
+		<div class="row">
+			<div class="col">
+				<!-- 検索フィールド部分 -->
+				<form th:action="@{/user/list}" th:object="${searchItems}"
+					th:method="post" class="container">
+					<div class="form-row">
+						<div class="form-group col-md-3">
+							<label for="inputId">ID</label>
+							<input type="text"
+								th:field="*{id}" class="form-control form-control-sm" id="inputId"
+								placeholder="ID">
+						</div>
+						<div class="form-group col-md-3">
+							<label for="inputLastName">姓</label>
+							<input type="text"
+								th:field="*{lastName}" class="form-control form-control-sm" id="inputLastName"
+								placeholder="姓">
+						</div>
+						<div class="form-group col-md-3">
+							<label for="inputFirstName">名</label>
+							<input type="text"
+								th:field="*{firstName}" class="form-control form-control-sm" id="inputFirstName"
+								placeholder="名">
+						</div>
+						<div class="form-group col-md-3 mb-0">
+							<label for="customRadioInline">性別</label>
+							<br>
+							<div class="custom-control custom-radio custom-control-inline"
+								id="customRadioInline">
+								<input type="radio" id="customRadioInline1"
+									name="customRadioInline1" class="custom-control-input"
+									th:field="*{gender}" value="0"> <label
+									class="custom-control-label" for="customRadioInline1">男性</label>
+							</div>
+							<div class="custom-control custom-radio custom-control-inline mb-3">
+								<input type="radio" id="customRadioInline2"
+									name="customRadioInline1" class="custom-control-input"
+									th:field="*{gender}" value="1"> <label
+									class="custom-control-label" for="customRadioInline2">女性</label>
+							</div>
+						</div>
+					</div>
+					<input type="submit" value="検索" class="btn btn-success btn-sm">
+				</form>
+			</div>
+		</div>
+		<hr>
+		<!-- テーブル部分 -->
 		<table class="table table-borderd table-striped">
 			<tr>
 				<th></th>

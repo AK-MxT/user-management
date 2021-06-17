@@ -18,6 +18,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.user.mng.constant.UserConstant;
 import com.user.mng.domain.model.request.UserConfirmRequestEntity;
 import com.user.mng.domain.model.request.UserEditRequestEntity;
+import com.user.mng.domain.model.request.UserListRequestEntity;
 import com.user.mng.domain.model.response.UserDetailResponseEntity;
 import com.user.mng.domain.model.response.UserEditResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
@@ -37,10 +38,11 @@ public class UserController {
 	 * @return ユーザ一覧画面
 	 */
 	@RequestMapping(value = "/list")
-	public String list(Model model) {
+	public String list(@Validated UserListRequestEntity userListRequestEntity, Model model) {
 
 		UserListResponseEntity list = userService.getUserList();
 
+		model.addAttribute("searchItems", userListRequestEntity);
 		model.addAttribute("list", list.getUserList());
 
 		// src/main/resources/templates/list.html を呼び出す
