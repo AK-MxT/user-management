@@ -2,8 +2,10 @@ package com.user.mng.domain.service;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
+import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Service;
 
 import com.user.mng.constant.UserConstant;
@@ -12,6 +14,7 @@ import com.user.mng.domain.model.TrnUserExample;
 import com.user.mng.domain.model.entity.UserDetailEntity;
 import com.user.mng.domain.model.entity.UserListEntity;
 import com.user.mng.domain.model.request.UserEditRequestEntity;
+import com.user.mng.domain.model.request.UserListRequestEntity;
 import com.user.mng.domain.model.response.UserDetailResponseEntity;
 import com.user.mng.domain.model.response.UserEditResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
@@ -23,6 +26,11 @@ public class UserServiceImpl implements UserService {
 
 	private final TrnUserMapper trnUserMapper;
 
+	private static final String START = "0";
+	private static final String END = "1";
+	private static final String BOTH = "2";
+	private static final String NONE = "3";
+
 	public UserServiceImpl(TrnUserMapper trnUserMapper) {
 		this.trnUserMapper = trnUserMapper;
 	}
@@ -33,13 +41,217 @@ public class UserServiceImpl implements UserService {
 	 * @return ユーザリスト
 	 */
 	@Override
-	public UserListResponseEntity getUserList() {
+	public UserListResponseEntity getUserList(UserListRequestEntity userListRequestEntity) {
+
+		String idStatus = this.checkId(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd());
+		String nameStatus = this.checkNames(userListRequestEntity.getLastName(), userListRequestEntity.getFirstName());
+		String genderStatus = this.checkGender(userListRequestEntity.getGender());
 
 		TrnUserExample filter = new TrnUserExample();
+
+		// 検索条件の設定
+		switch (idStatus) {
+		case START:
+			switch (nameStatus) {
+			case START:
+				switch (genderStatus) {
+				case UserConstant.GENDER_MAN:
+				case UserConstant.GENDER_WOMAN:
+					filter.createCriteria().andIdGreaterThanOrEqualTo(userListRequestEntity.getIdStart())
+							.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName())).andGenderEqualTo(genderStatus);
+					break;
+				}
+				filter.createCriteria().andIdGreaterThanOrEqualTo(userListRequestEntity.getIdStart())
+						.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()));
+				break;
+			case END:
+				switch (genderStatus) {
+				case UserConstant.GENDER_MAN:
+				case UserConstant.GENDER_WOMAN:
+					filter.createCriteria().andIdGreaterThanOrEqualTo(userListRequestEntity.getIdStart())
+							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName())).andGenderEqualTo(genderStatus);
+					break;
+				}
+				filter.createCriteria().andIdGreaterThanOrEqualTo(userListRequestEntity.getIdStart())
+						.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()));
+				break;
+			case BOTH:
+				switch (genderStatus) {
+				case UserConstant.GENDER_MAN:
+				case UserConstant.GENDER_WOMAN:
+					filter.createCriteria().andIdGreaterThanOrEqualTo(userListRequestEntity.getIdStart())
+							.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
+							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName())).andGenderEqualTo(genderStatus);
+					break;
+				}
+				filter.createCriteria().andIdGreaterThanOrEqualTo(userListRequestEntity.getIdStart())
+						.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
+						.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()));
+				break;
+			case NONE:
+				switch (genderStatus) {
+				case UserConstant.GENDER_MAN:
+				case UserConstant.GENDER_WOMAN:
+					filter.createCriteria().andIdGreaterThanOrEqualTo(userListRequestEntity.getIdStart())
+							.andGenderEqualTo(genderStatus);
+					break;
+				}
+				filter.createCriteria().andIdGreaterThanOrEqualTo(userListRequestEntity.getIdStart());
+				break;
+			}
+			break;
+		case END:
+			switch (nameStatus) {
+			case START:
+				switch (genderStatus) {
+				case UserConstant.GENDER_MAN:
+				case UserConstant.GENDER_WOMAN:
+					filter.createCriteria().andIdLessThanOrEqualTo(userListRequestEntity.getIdEnd())
+							.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName())).andGenderEqualTo(genderStatus);
+					break;
+				}
+				filter.createCriteria().andIdLessThanOrEqualTo(userListRequestEntity.getIdEnd())
+						.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()));
+				break;
+			case END:
+				switch (genderStatus) {
+				case UserConstant.GENDER_MAN:
+				case UserConstant.GENDER_WOMAN:
+					filter.createCriteria().andIdLessThanOrEqualTo(userListRequestEntity.getIdEnd())
+							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName())).andGenderEqualTo(genderStatus);
+					break;
+				}
+				filter.createCriteria().andIdLessThanOrEqualTo(userListRequestEntity.getIdEnd())
+						.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()));
+				break;
+			case BOTH:
+				switch (genderStatus) {
+				case UserConstant.GENDER_MAN:
+				case UserConstant.GENDER_WOMAN:
+					filter.createCriteria().andIdLessThanOrEqualTo(userListRequestEntity.getIdEnd())
+							.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
+							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName())).andGenderEqualTo(genderStatus);
+					break;
+				}
+				filter.createCriteria().andIdLessThanOrEqualTo(userListRequestEntity.getIdEnd())
+						.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
+						.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()));
+				break;
+			case NONE:
+				switch (genderStatus) {
+				case UserConstant.GENDER_MAN:
+				case UserConstant.GENDER_WOMAN:
+					filter.createCriteria().andIdLessThanOrEqualTo(userListRequestEntity.getIdEnd())
+							.andGenderEqualTo(genderStatus);
+					break;
+				}
+				filter.createCriteria().andIdLessThanOrEqualTo(userListRequestEntity.getIdEnd());
+				break;
+			}
+			break;
+		case BOTH:
+			switch (nameStatus) {
+			case START:
+				switch (genderStatus) {
+				case UserConstant.GENDER_MAN:
+				case UserConstant.GENDER_WOMAN:
+					filter.createCriteria().andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
+							.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName())).andGenderEqualTo(genderStatus);
+					break;
+				}
+				filter.createCriteria().andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
+						.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()));
+				break;
+			case END:
+				switch (genderStatus) {
+				case UserConstant.GENDER_MAN:
+				case UserConstant.GENDER_WOMAN:
+					filter.createCriteria().andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
+							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName())).andGenderEqualTo(genderStatus);
+					break;
+				}
+				filter.createCriteria().andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
+						.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()));
+				break;
+			case BOTH:
+				switch (genderStatus) {
+				case UserConstant.GENDER_MAN:
+				case UserConstant.GENDER_WOMAN:
+					filter.createCriteria().andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
+							.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
+							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName())).andGenderEqualTo(genderStatus);
+					break;
+				}
+				filter.createCriteria().andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
+						.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
+						.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()));
+				break;
+			case NONE:
+				switch (genderStatus) {
+				case UserConstant.GENDER_MAN:
+				case UserConstant.GENDER_WOMAN:
+					filter.createCriteria().andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
+							.andGenderEqualTo(genderStatus);
+					break;
+				}
+				filter.createCriteria().andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd());
+				break;
+			}
+			break;
+		case NONE:
+			switch (nameStatus) {
+			case START:
+				switch (genderStatus) {
+				case UserConstant.GENDER_MAN:
+				case UserConstant.GENDER_WOMAN:
+					filter.createCriteria().andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName())).andGenderEqualTo(genderStatus);
+					break;
+				}
+				filter.createCriteria().andLastNameLike("%" + userListRequestEntity.getLastName() + "%");
+				break;
+			case END:
+				switch (genderStatus) {
+				case UserConstant.GENDER_MAN:
+				case UserConstant.GENDER_WOMAN:
+					filter.createCriteria().andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName())).andGenderEqualTo(genderStatus);
+					break;
+				}
+				filter.createCriteria().andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()));
+				break;
+			case BOTH:
+				switch (genderStatus) {
+				case UserConstant.GENDER_MAN:
+				case UserConstant.GENDER_WOMAN:
+					filter.createCriteria().andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
+							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName())).andGenderEqualTo(genderStatus);
+					break;
+				}
+				filter.createCriteria().andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
+						.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()));
+				break;
+			case NONE:
+				switch (genderStatus) {
+				case UserConstant.GENDER_MAN:
+				case UserConstant.GENDER_WOMAN:
+					filter.createCriteria().andGenderEqualTo(genderStatus);
+					break;
+				}
+				break;
+			}
+			break;
+		}
+
+		// ソートの設定
 		filter.setOrderByClause("id");
 
+		RowBounds hoge = new RowBounds(0, 100);
+
 		// ユーザ取得処理
-		List<TrnUser> result = trnUserMapper.selectByExample(filter);
+		List<TrnUser> result = trnUserMapper.selectByExampleWithRowbounds(filter, hoge);
+
+		// ページング用の件数を計算
+		Double pageCount = Math.ceil(result.size() / (double) UserConstant.DEFAULT_LIMIT);
+		userListRequestEntity.setPaging(pageCount.intValue());
 
 		// 返却用エンティティを生成
 		UserListResponseEntity res = new UserListResponseEntity();
@@ -60,6 +272,35 @@ public class UserServiceImpl implements UserService {
 		});
 
 		return res;
+	}
+
+
+	private String checkId(Integer idStart, Integer idEnd) {
+		if (Objects.isNull(idStart)) {
+			if (Objects.isNull(idEnd)) {
+				return NONE;
+			}
+			return END;
+		} else if (Objects.isNull(idEnd)) {
+			return START;
+		}
+		return BOTH;
+	}
+
+	private String checkNames(String lastName, String firstName) {
+		if (StringUtils.isBlank(lastName)) {
+			if (StringUtils.isBlank(firstName)) {
+				return NONE;
+			}
+			return END;
+		} else if (StringUtils.isBlank(firstName)) {
+			return START;
+		}
+		return BOTH;
+	}
+
+	private String checkGender(String gender) {
+		return StringUtils.isBlank(gender) ? NONE : gender;
 	}
 
 	/**

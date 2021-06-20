@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <link rel="stylesheet"
 	th:href="@{../webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" />
+<link href="/css/list.css" rel="stylesheet" />
 <script th:src="@{/webjars/jquery/3.5.0/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
 <title>ユーザ一覧</title>
@@ -17,41 +18,58 @@
 				<div th:text="${information}"></div>
 			</div>
 		</div>
+
+		<!-- エラーメッセージ表示部分 -->
+		<div th:if="${validationError}" th:each="error : ${validationError}">
+			<div class="alert alert-danger alert-dismissible fade show"
+				role="alert">
+				<div th:text="${error}"></div>
+				<button type="button" class="close" data-dismiss="alert"
+					aria-label="Close">
+					<span aria-hidden="true">&times;</span>
+				</button>
+			</div>
+		</div>
+
 		<div class="row">
 			<div class="col-6">
 				<h2>ユーザ一覧</h2>
 			</div>
-			<div class="col-6 text-right">
+			<div class="col-6 text-right align-self-center">
 				<a role="button" class="btn btn-secondary btn-sm" th:href="@{/user/new}">ユーザ登録</a>
 			</div>
 		</div>
 		<hr>
 		<div class="row">
-			<div class="col">
+			<div class="col-4 offset-8">
 				<!-- 検索フィールド部分 -->
 				<form th:action="@{/user/list}" th:object="${searchItems}"
-					th:method="post" class="container">
+					th:method="post" class="container form-inline">
 					<div class="form-row">
-						<div class="form-group col-md-3">
-							<label for="inputId">ID</label>
+						<div class="form-group col-md-12 mb-2">
+							<label for="inputIdStart" class="mr-1">ID</label>
 							<input type="text"
-								th:field="*{id}" class="form-control form-control-sm" id="inputId"
-								placeholder="ID">
+								th:field="*{idStart}" class="form-control form-control-sm" id="inputIdStart"
+								placeholder="ID" maxlength="9" oninput="value = value.replace(/[^0-9]+/i,'');">
+							<span class="mx-1">～</span>
+							<input type="text"
+								th:field="*{idEnd}" class="form-control form-control-sm" id="inputIdEnd"
+								placeholder="ID" maxlength="9" oninput="value = value.replace(/[^0-9]+/i,'');">
 						</div>
-						<div class="form-group col-md-3">
-							<label for="inputLastName">姓</label>
+						<div class="form-group col-md-6 mb-2">
+							<label for="inputLastName" class="mr-1">姓</label>
 							<input type="text"
 								th:field="*{lastName}" class="form-control form-control-sm" id="inputLastName"
-								placeholder="姓">
+								placeholder="姓" maxlength="10">
 						</div>
-						<div class="form-group col-md-3">
-							<label for="inputFirstName">名</label>
+						<div class="form-group col-md-6 mb-2">
+							<label for="inputFirstName" class="mr-1">名</label>
 							<input type="text"
 								th:field="*{firstName}" class="form-control form-control-sm" id="inputFirstName"
-								placeholder="名">
+								placeholder="名" maxlength="10">
 						</div>
-						<div class="form-group col-md-3 mb-0">
-							<label for="customRadioInline">性別</label>
+						<div class="form-group col-md-8 mb-0 align-self-center">
+							<label for="customRadioInline" class="mr-1">性別</label>
 							<br>
 							<div class="custom-control custom-radio custom-control-inline"
 								id="customRadioInline">
@@ -60,15 +78,17 @@
 									th:field="*{gender}" value="0"> <label
 									class="custom-control-label" for="customRadioInline1">男性</label>
 							</div>
-							<div class="custom-control custom-radio custom-control-inline mb-3">
+							<div class="custom-control custom-radio custom-control-inline">
 								<input type="radio" id="customRadioInline2"
 									name="customRadioInline1" class="custom-control-input"
 									th:field="*{gender}" value="1"> <label
 									class="custom-control-label" for="customRadioInline2">女性</label>
 							</div>
 						</div>
+						<div class="col-md-4 text-center">
+							<input type="submit" value="検索" class="btn btn-success btn-sm">
+						</div>
 					</div>
-					<input type="submit" value="検索" class="btn btn-success btn-sm">
 				</form>
 			</div>
 		</div>
@@ -98,6 +118,19 @@
 				<td th:text="${user.deleteFlg}"></td>
 			</tr>
 		</table>
+		<div class="container" th:if="${list.size() == 0}">
+			<div class="row justify-content-center">
+				<span class="no-data">検索結果は0件です</span>
+			</div>
+		</div>
+		<ul class="pagination justify-content-center">
+			<li class="page-item disabled"><a class="page-link" href="#"
+				tabindex="-1">Previous</a></li>
+			<li class="page-item"><a class="page-link" href="#">1</a></li>
+			<li class="page-item"><a class="page-link" href="#">2</a></li>
+			<li class="page-item"><a class="page-link" href="#">3</a></li>
+			<li class="page-item"><a class="page-link" href="#">Next</a></li>
+		</ul>
 	</div>
 	<div th:replace="layout :: footer"></div>
 	<script>

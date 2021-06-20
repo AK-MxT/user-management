@@ -29,6 +29,9 @@ public final class UserConstant {
 	public static final String UPDATE_SUCCESS = "ユーザの更新が完了しました。";
 	public static final String DELETE_SUCCESS = "ユーザを削除しました。";
 
+	// DB関連
+	public static final int DEFAULT_LIMIT = 10;
+
 	private UserConstant() {
 	}
 }

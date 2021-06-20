@@ -1,0 +1,13 @@
+@charset "UTF-8";
+
+#inputIdStart, #inputIdEnd {
+	width: 84px;
+}
+
+#inputLastName, #inputFirstName {
+	width: 128px;
+}
+
+.no-data {
+	font-weight: bold;
+}

@@ -3,6 +3,8 @@
 <generatorConfiguration>
   <context id="context1" targetRuntime="MyBatis3">
 
+  <plugin type="org.mybatis.generator.plugins.RowBoundsPlugin" />
+
     <!-- DB接続設定 -->
     <jdbcConnection
         connectionURL="jdbc:mysql://localhost:3306/management"
@@ -27,6 +29,7 @@
         type="XMLMAPPER"
     />
 
+    <table schema="management" tableName="trn_account" />
     <table schema="management" tableName="trn_user" />
 
   </context>

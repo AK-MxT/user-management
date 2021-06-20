@@ -58,6 +58,18 @@ public final class CommonUtils {
 		return date;
 	}
 
+	/**
+	 * 住所情報のフォーマット
+	 * 表示用に住所情報を結合して返却する
+	 *
+	 * @param prefecture
+	 * @param add1
+	 * @param add2
+	 * @param add3
+	 * @param add4
+	 *
+	 * @return 結合した住所情報
+	 */
 	public static String formatAddress (String prefecture, String add1, String add2, String add3, String add4) {
 
 		if (StringUtils.isEmpty(add3)) {
@@ -68,5 +80,15 @@ public final class CommonUtils {
 		String address4 = StringUtils.isEmpty(add4) ? "" : " " + add4;
 
 		return prefecture + " " + add1 + " " + add2 + " " + add3 + address4;
+	}
+
+	/**
+	 * LIKE検索用に特殊文字を結合する
+	 *
+	 * @param searchValue
+	 * @return %を結合した検索値
+	 */
+	public static String generateLikeFormat(String searchValue) {
+		return "%" + searchValue + "%";
 	}
 }

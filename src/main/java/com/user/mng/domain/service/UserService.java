@@ -4,6 +4,7 @@
 package com.user.mng.domain.service;
 
 import com.user.mng.domain.model.request.UserEditRequestEntity;
+import com.user.mng.domain.model.request.UserListRequestEntity;
 import com.user.mng.domain.model.response.UserDetailResponseEntity;
 import com.user.mng.domain.model.response.UserEditResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
@@ -14,7 +15,7 @@ import com.user.mng.domain.model.response.UserListResponseEntity;
  */
 public interface UserService {
 
-	public UserListResponseEntity getUserList();
+	public UserListResponseEntity getUserList(UserListRequestEntity userListRequestEntity);
 
 	public UserDetailResponseEntity getUser(Long id);
 

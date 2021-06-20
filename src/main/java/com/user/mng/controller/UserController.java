@@ -38,9 +38,20 @@ public class UserController {
 	 * @return ユーザ一覧画面
 	 */
 	@RequestMapping(value = "/list")
-	public String list(@Validated UserListRequestEntity userListRequestEntity, Model model) {
+	public String list(@Validated UserListRequestEntity userListRequestEntity, Model model, BindingResult result) {
 
-		UserListResponseEntity list = userService.getUserList();
+		if (result.hasErrors()) {
+			List<String> errorList = new ArrayList<String>();
+			for (ObjectError error : result.getAllErrors()) {
+				errorList.add(error.getDefaultMessage());
+			}
+			model.addAttribute("validationError", errorList);
+			model.addAttribute("searchItems", userListRequestEntity);
+
+			return "list";
+		}
+
+		UserListResponseEntity list = userService.getUserList(userListRequestEntity);
 
 		model.addAttribute("searchItems", userListRequestEntity);
 		model.addAttribute("list", list.getUserList());
@@ -139,7 +150,7 @@ public class UserController {
 
 		model.addAttribute("userForEdit", userConfirmRequestEntity);
 
-		// src/main/resources/templates/update.html を呼び出す
+		// src/main/resources/templates/confirm.html を呼び出す
 		return "confirm";
 	}
 
@@ -205,7 +216,7 @@ public class UserController {
 
 		redirectAttributes.addFlashAttribute("information", UserConstant.REGISTER_SUCCESS);
 
-		// 更新後は一覧画面へリダイレクト
+		// 登録後後は一覧画面へリダイレクト
 		return "redirect:/user/list";
 	}
 

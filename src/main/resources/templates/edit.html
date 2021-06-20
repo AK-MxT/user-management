@@ -43,28 +43,28 @@
 					<span class="required">※</span>
 					<input type="text"
 						th:field="*{lastNameKana}" class="form-control"
-						id="inputLastNameKana" placeholder="姓カナ">
+						id="inputLastNameKana" placeholder="姓カナ" maxlength="20">
 				</div>
 				<div class="form-group col-md-6">
 					<label for="inputFirstNameKana">名カナ</label>
 					<span class="required">※</span>
 					<input type="text"
 						th:field="*{firstNameKana}" class="form-control"
-						id="inputFirstNameKana" placeholder="名カナ">
+						id="inputFirstNameKana" placeholder="名カナ" maxlength="20">
 				</div>
 				<div class="form-group col-md-6">
 					<label for="inputLastName">姓</label>
 					<span class="required">※</span>
 					<input type="text"
 						th:field="*{lastName}" class="form-control" id="inputLastName"
-						placeholder="姓">
+						placeholder="姓" maxlength="10">
 				</div>
 				<div class="form-group col-md-6">
 					<label for="inputFirstName">名</label>
 					<span class="required">※</span>
 					<input type="text"
 						th:field="*{firstName}" class="form-control" id="inputFirstName"
-						placeholder="名">
+						placeholder="名" maxlength="10">
 				</div>
 			</div>
 			<label for="customRadioInline">性別</label>
@@ -96,7 +96,7 @@
 					<span class="required">※</span>
 					<input type="text"
 						th:field="*{postalCode}" class="form-control" id="inputPostalCode"
-						placeholder="郵便番号">
+						placeholder="郵便番号" maxlength="7" oninput="value = value.replace(/[^0-9]+/i,'');">
 				</div>
 				<div class="form-group col-md-auto">
 					<label for="inputPrefecture">都道府県</label>
@@ -157,31 +157,30 @@
 					<span class="required">※</span>
 					<input type="text"
 						th:field="*{address1}" class="form-control" id="inputAddress1"
-						placeholder="市区町村">
+						placeholder="市区町村" maxlength="30">
 				</div>
 				<div class="form-group col-md-6">
 					<label for="inputAddress2">町名</label>
 					<span class="required">※</span>
 					<input type="text"
 						th:field="*{address2}" class="form-control" id="inputAddress2"
-						placeholder="町名">
+						placeholder="町名" maxlength="30">
 				</div>
 				<div class="form-group col-md-6">
 					<label for="inputAddress3">番地</label> <input type="text"
 						th:field="*{address3}" class="form-control" id="inputAddress3"
-						placeholder="番地">
+						placeholder="番地" maxlength="30">
 				</div>
 				<div class="form-group col-md-6">
 					<label for="inputAddress4">建物名・部屋番号</label> <input type="text"
 						th:field="*{address4}" class="form-control" id="inputAddress4"
-						placeholder="建物名・部屋番号">
+						placeholder="建物名・部屋番号" maxlength="30">
 				</div>
 				<div class="form-group col-md-auto">
 					<label for="inputPhoneNumber">電話番号</label>
-					<span class="required">※</span>
 					<input type="text"
 						th:field="*{phoneNumber}" class="form-control"
-						id="inputPhoneNumber" placeholder="電話番号">
+						id="inputPhoneNumber" placeholder="電話番号" maxlength="11">
 				</div>
 				<div class="form-group col-md-12">
 					<label for="inputRemarks">備考</label>
@@ -191,12 +190,12 @@
 				<div th:unless="*{id}" class="form-group col-md-auto">
 					<label for="inputInsertUser">登録者</label> <input type="text"
 						th:field="*{insertUser}" class="form-control" id="inputInsertUser"
-						placeholder="登録者">
+						placeholder="登録者" maxlength="45">
 				</div>
 				<div th:if="*{id}" class="form-group col-md-auto">
 					<label for="inputUpdateUser">更新者</label> <input type="text"
 						th:field="*{updateUser}" class="form-control" id="inputUpdateUser"
-						placeholder="更新者">
+						placeholder="更新者" maxlength="45">
 				</div>
 			</div>
 			<div class="btn_area_center">
