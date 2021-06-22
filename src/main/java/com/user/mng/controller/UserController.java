@@ -37,8 +37,8 @@ public class UserController {
 	 * @param model
 	 * @return ユーザ一覧画面
 	 */
-	@RequestMapping(value = "/list")
-	public String list(@Validated UserListRequestEntity userListRequestEntity, Model model, BindingResult result) {
+	@RequestMapping(value = "/list/{page}")
+	public String list(@PathVariable @Validated Integer page, UserListRequestEntity userListRequestEntity, Model model, BindingResult result) {
 
 		if (result.hasErrors()) {
 			List<String> errorList = new ArrayList<String>();

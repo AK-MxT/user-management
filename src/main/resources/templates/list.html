@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <link rel="stylesheet"
-	th:href="@{../webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" />
+	th:href="@{../../webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" />
 <link href="/css/list.css" rel="stylesheet" />
 <script th:src="@{/webjars/jquery/3.5.0/jquery.min.js}"></script>
 <script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
@@ -43,7 +43,7 @@
 		<div class="row">
 			<div class="col-4 offset-8">
 				<!-- 検索フィールド部分 -->
-				<form th:action="@{/user/list}" th:object="${searchItems}"
+				<form id="search" th:action="@{/user/list/1}" th:object="${searchItems}"
 					th:method="post" class="container form-inline">
 					<div class="form-row">
 						<div class="form-group col-md-12 mb-2">
@@ -126,7 +126,9 @@
 		<ul class="pagination justify-content-center">
 			<li class="page-item"><a class="page-link" href="#" tabindex="-1">Previous</a></li>
 			<th:block th:each="i : ${#numbers.sequence(1, searchItems.paging)}">
-				<li class="page-item"><a name="offset" th:value="${i}" class="page-link" th:text="${i}">1</a></li>
+				<li class="page-item"><a name="offset" th:value="${i}"
+					class="page-link" th:text="${i}"
+					onClick="document.getElementById('search').submit()">1</a></li>
 			</th:block>
 			<li class="page-item"><a class="page-link" href="#">Next</a></li>
 		</ul>
