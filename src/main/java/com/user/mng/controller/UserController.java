@@ -236,6 +236,6 @@ public class UserController {
 		redirectAttributes.addFlashAttribute("information", UserConstant.DELETE_SUCCESS);
 
 		// 削除後は一覧画面へリダイレクト
-		return "redirect:/user/list";
+		return "redirect:/user/list/1";
 	}
 }

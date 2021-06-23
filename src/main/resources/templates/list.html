@@ -128,7 +128,7 @@
 			<th:block th:each="i : ${#numbers.sequence(1, searchItems.paging)}">
 				<li class="page-item"><a name="offset" th:value="${i}"
 					class="page-link" th:text="${i}"
-					onClick="document.getElementById('search').submit()">1</a></li>
+					th:onClick="'formSubmit(' + '\'/user/list/' + ${i} + '\')'">1</a></li>
 			</th:block>
 			<li class="page-item"><a class="page-link" href="#">Next</a></li>
 		</ul>
@@ -140,6 +140,18 @@
 				$(this).remove();
 			});
 		}, 2000);
+
+		// 引数で指定されたパスでサブミットする
+		function formSubmit(path) {
+			let form = document.getElementById('search');
+			if (!form) {
+				alert('フォームが取得できませんでした');
+				return;
+			}
+			form.action = path;
+			form.method = "post";
+			form.submit();
+		};
 	</script>
 </body>
 </html>
