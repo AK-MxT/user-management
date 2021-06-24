@@ -123,14 +123,16 @@
 				<span class="no-data">検索結果は0件です</span>
 			</div>
 		</div>
-		<ul class="pagination justify-content-center">
-			<li class="page-item"><a class="page-link" href="#" tabindex="-1">Previous</a></li>
+
+		<!-- ページング部分 -->
+		<ul th:if="${list.size() > 0}" class="pagination justify-content-center">
+			<li class="page-item" th:classappend="(${page}==1)? 'disabled' : ''"><a class="page-link" href="#" tabindex="-1" th:onClick="'formSubmit(' + '\'/user/list/' + (${page}-1) + '\')'">前へ</a></li>
 			<th:block th:each="i : ${#numbers.sequence(1, searchItems.paging)}">
-				<li class="page-item"><a name="offset" th:value="${i}"
+				<li class="page-item" th:classappend="(${i}==${page})? 'active' : ''"><a name="offset" th:value="${i}"
 					class="page-link" th:text="${i}"
-					th:onClick="'formSubmit(' + '\'/user/list/' + ${i} + '\')'">1</a></li>
+					href="#" th:onClick="'formSubmit(' + '\'/user/list/' + ${i} + '\')'">1</a></li>
 			</th:block>
-			<li class="page-item"><a class="page-link" href="#">Next</a></li>
+			<li class="page-item" th:classappend="(${page}==${searchItems.paging})? 'disabled' : ''"><a class="page-link" href="#" tabindex="-1" th:onClick="'formSubmit(' + '\'/user/list/' + (${page}+1) + '\')'">次へ</a></li>
 		</ul>
 	</div>
 	<div th:replace="layout :: footer"></div>

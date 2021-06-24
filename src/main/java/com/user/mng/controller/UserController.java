@@ -51,8 +51,9 @@ public class UserController {
 			return "list";
 		}
 
-		UserListResponseEntity list = userService.getUserList(userListRequestEntity);
+		UserListResponseEntity list = userService.getUserList(page, userListRequestEntity);
 
+		model.addAttribute("page", page);
 		model.addAttribute("searchItems", userListRequestEntity);
 		model.addAttribute("list", list.getUserList());
 

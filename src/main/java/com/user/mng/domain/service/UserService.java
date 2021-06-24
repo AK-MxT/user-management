@@ -15,7 +15,7 @@ import com.user.mng.domain.model.response.UserListResponseEntity;
  */
 public interface UserService {
 
-	public UserListResponseEntity getUserList(UserListRequestEntity userListRequestEntity);
+	public UserListResponseEntity getUserList(Integer page, UserListRequestEntity userListRequestEntity);
 
 	public UserDetailResponseEntity getUser(Long id);
 

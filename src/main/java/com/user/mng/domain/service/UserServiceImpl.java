@@ -41,7 +41,7 @@ public class UserServiceImpl implements UserService {
 	 * @return ユーザリスト
 	 */
 	@Override
-	public UserListResponseEntity getUserList(UserListRequestEntity userListRequestEntity) {
+	public UserListResponseEntity getUserList(Integer page, UserListRequestEntity userListRequestEntity) {
 
 		String idStatus = this.checkId(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd());
 		String nameStatus = this.checkNames(userListRequestEntity.getLastName(), userListRequestEntity.getFirstName());
@@ -244,13 +244,22 @@ public class UserServiceImpl implements UserService {
 		// ソートの設定
 		filter.setOrderByClause("id");
 
-		RowBounds hoge = new RowBounds(0, 100);
+		// pageの値を元にoffsetを算出する
+		int offset = page == 1 ? 0 : --page * UserConstant.DEFAULT_LIMIT;
+
+		// offset, limitの設定
+		RowBounds hoge = new RowBounds(offset, UserConstant.DEFAULT_LIMIT);
+
+		// 検索結果の総数を取得
+		Long cnt = trnUserMapper.countByExample(filter);
 
 		// ユーザ取得処理
 		List<TrnUser> result = trnUserMapper.selectByExampleWithRowbounds(filter, hoge);
 
 		// ページング用の件数を計算
-		Double pageCount = Math.ceil(result.size() / (double) UserConstant.DEFAULT_LIMIT);
+		Double pageCount = Math.ceil(cnt / (double) UserConstant.DEFAULT_LIMIT);
+
+		// ページング件数をセット
 		userListRequestEntity.setPaging(pageCount.intValue());
 
 		// 返却用エンティティを生成
@@ -258,6 +267,8 @@ public class UserServiceImpl implements UserService {
 
 		result.forEach(p -> {
 			UserListEntity user = new UserListEntity();
+
+			// 検索結果のセット
 			user.setId(p.getId());
 			user.setLastName(p.getLastName());
 			user.setFirstName(p.getFirstName());
