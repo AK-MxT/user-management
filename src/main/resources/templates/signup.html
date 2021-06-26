@@ -21,9 +21,12 @@
 				</button>
 			</div>
 		</div>
-		<form th:action="@{/register}" th:object="${userForEdit}" method="post">
-			<div class="row justify-content-center">
-				<div class="col-6 align-content-center">
+	</div>
+	<div class="container d-flex align-items-center justify-content-center" style="height: 100vh;">
+		<!-- 新規登録フォーム部分 -->
+		<div class="row justify-content-center">
+			<div class="col-8">
+				<form th:action="@{/register}" th:object="${userForEdit}" method="post">
 					<div class="card">
 						<div class="card-header">
 							<h2>新規登録</h2>
@@ -39,9 +42,9 @@
 							</div>
 						</div>
 					</div>
-				</div>
+				</form>
 			</div>
-		</form>
+		</div>
 	</div>
 </body>
 </html>
