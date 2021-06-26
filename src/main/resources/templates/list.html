@@ -1,13 +1,45 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
-<meta charset="UTF-8">
-<link rel="stylesheet"
-	th:href="@{../../webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" />
-<link href="/css/list.css" rel="stylesheet" />
-<script th:src="@{/webjars/jquery/3.5.0/jquery.min.js}"></script>
-<script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
-<title>ユーザ一覧</title>
+	<meta charset="UTF-8">
+	<link rel="stylesheet"
+		th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" />
+	<link href="/css/list.css" rel="stylesheet" />
+	<script th:src="@{/webjars/jquery/3.5.0/jquery.min.js}"></script>
+	<script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
+	<link rel="stylesheet" type="text/css" href="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.css"/>
+	<script type="text/javascript" src="https://cdn.datatables.net/v/dt/dt-1.10.25/datatables.min.js"></script>
+	<script>
+		jQuery(function($){
+			$("#user-table").DataTable({
+				// ソート機能の基本設定
+
+				// 件数切替機能 無効
+				lengthChange: false,
+				// 検索機能 無効
+				searching: false,
+				// 情報表示 無効
+				info: false,
+				// ページング機能 無効
+				paging: false,
+				// 初期表示はIDの昇順
+				order: [ [ 1, "asc" ] ],
+				// 詳細ボタンの列はソート無効化
+				columnDefs: [
+					{
+						targets: 0,
+						orderable: false
+					}
+				],
+
+				// 件数0件時の表示は不要なので消す
+				drawCallback: function(settings) {
+					$('.dataTables_empty').parent().hide();
+				}
+			});
+		});
+	</script>
+	<title>ユーザ一覧</title>
 </head>
 <body>
     <div th:replace="layout :: header"></div>
@@ -94,29 +126,34 @@
 		</div>
 		<hr>
 		<!-- テーブル部分 -->
-		<table class="table table-borderd table-striped">
-			<tr>
-				<th></th>
-				<th>ID</th>
-				<th>姓</th>
-				<th>名</th>
-				<th>性別</th>
-				<th>誕生日</th>
-				<th>更新者</th>
-				<th>更新日時</th>
-				<th>削除フラグ</th>
-			</tr>
-			<tr th:each="user : ${list}">
-				<td><a role="button" class="btn btn-primary btn-sm" th:href="@{/user/detail/{id}(id=${user.id})}">詳細</a></td>
-				<td th:text="${user.id}"></td>
-				<td th:text="${user.lastName}"></td>
-				<td th:text="${user.firstName}"></td>
-				<td th:text="${user.gender}"></td>
-				<td th:text="${user.birthday}"></td>
-				<td th:text="${user.updateUser}"></td>
-				<td th:text="${user.updateDate}"></td>
-				<td th:text="${user.deleteFlg}"></td>
-			</tr>
+		<table id="user-table" class="table table-borderd table-striped">
+			<!-- thead, tbodyを用意しないとdatatablesが動作しない -->
+			<thead>
+				<tr>
+					<th></th>
+					<th>ID</th>
+					<th>姓</th>
+					<th>名</th>
+					<th>性別</th>
+					<th>誕生日</th>
+					<th>更新者</th>
+					<th>更新日時</th>
+					<th>削除フラグ</th>
+				</tr>
+			</thead>
+			<tbody>
+				<tr th:each="user : ${list}">
+					<td><a role="button" class="btn btn-primary btn-sm" th:href="@{/user/detail/{id}(id=${user.id})}">詳細</a></td>
+					<td th:text="${user.id}"></td>
+					<td th:text="${user.lastName}"></td>
+					<td th:text="${user.firstName}"></td>
+					<td th:text="${user.gender}"></td>
+					<td th:text="${user.birthday}"></td>
+					<td th:text="${user.updateUser}"></td>
+					<td th:text="${user.updateDate}"></td>
+					<td th:text="${user.deleteFlg}"></td>
+				</tr>
+			</tbody>
 		</table>
 		<div class="container" th:if="${list.size() == 0}">
 			<div class="row justify-content-center">
@@ -125,14 +162,22 @@
 		</div>
 
 		<!-- ページング部分 -->
-		<ul th:if="${list.size() > 0}" class="pagination justify-content-center">
-			<li class="page-item" th:classappend="(${page}==1)? 'disabled' : ''"><a class="page-link" href="#" tabindex="-1" th:onClick="'formSubmit(' + '\'/user/list/' + (${page}-1) + '\')'">前へ</a></li>
+		<ul th:if="${list.size() > 0}"
+			class="pagination justify-content-center mt-3">
+			<li class="page-item" th:classappend="(${page}==1)? 'disabled' : ''"><a
+				class="page-link" href="#" tabindex="-1"
+				th:onClick="'formSubmit(' + '\'/user/list/' + (${page}-1) + '\')'">前へ</a></li>
 			<th:block th:each="i : ${#numbers.sequence(1, searchItems.paging)}">
-				<li class="page-item" th:classappend="(${i}==${page})? 'active' : ''"><a name="offset" th:value="${i}"
-					class="page-link" th:text="${i}"
-					href="#" th:onClick="'formSubmit(' + '\'/user/list/' + ${i} + '\')'">1</a></li>
+				<li class="page-item"
+					th:classappend="(${i}==${page})? 'active' : ''"><a
+					name="offset" th:value="${i}" class="page-link" th:text="${i}"
+					href="#"
+					th:onClick="'formSubmit(' + '\'/user/list/' + ${i} + '\')'">1</a></li>
 			</th:block>
-			<li class="page-item" th:classappend="(${page}==${searchItems.paging})? 'disabled' : ''"><a class="page-link" href="#" tabindex="-1" th:onClick="'formSubmit(' + '\'/user/list/' + (${page}+1) + '\')'">次へ</a></li>
+			<li class="page-item"
+				th:classappend="(${page}==${searchItems.paging})? 'disabled' : ''"><a
+				class="page-link" href="#" tabindex="-1"
+				th:onClick="'formSubmit(' + '\'/user/list/' + (${page}+1) + '\')'">次へ</a></li>
 		</ul>
 	</div>
 	<div th:replace="layout :: footer"></div>

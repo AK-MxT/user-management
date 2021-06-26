@@ -72,14 +72,21 @@
 			</tr>
 		</table>
 		<div>
-			<a role="button" class="btn btn-primary btn-sm"
-				th:href="@{/user/edit/{id}(id=*{id})}">編集</a> <a role="button"
-				class="btn btn-secondary btn-sm" href="/user/list/1">一覧に戻る</a>
-			<!-- Button trigger modal -->
-			<button type="button" class="btn btn-danger btn-sm"
-				data-toggle="modal" data-target="#exampleModal">削除</button>
+			<hr>
+			<ul class="nav nav-pills">
+				<li class="nav-item mr-auto">
+					<a role="button" class="btn btn-primary btn-sm"
+						th:href="@{/user/edit/{id}(id=*{id})}">編集</a>
+					<a role="button"
+						class="btn btn-secondary btn-sm" href="/user/list/1">一覧に戻る</a>
+				</li>
+				<li class="nav-item">
+					<button type="button" class="btn btn-danger btn-sm"
+						data-toggle="modal" data-target="#exampleModal">削除</button>
+				</li>
+			</ul>
 
-			<!-- Modal -->
+			<!-- ユーザ削除時のモーダル部分 -->
 			<div class="modal fade" id="exampleModal" tabindex="-1" role="dialog"
 				aria-labelledby="exampleModalLabel" aria-hidden="true">
 				<div class="modal-dialog modal-dialog-centered" role="document">
