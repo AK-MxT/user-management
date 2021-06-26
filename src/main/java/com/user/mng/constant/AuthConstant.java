@@ -11,6 +11,7 @@ public final class AuthConstant {
 
 	// アラートメッセージ系
 	public static final String REGISTER_SUCCESS = "アカウントの登録が完了しました。";
+	public static final String LOGIN_ERROR = "ユーザ名 または パスワードに誤りがあります。";
 
 	private AuthConstant() {
 	}

@@ -2,6 +2,7 @@ package com.user.mng.controller;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -12,6 +13,7 @@ import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.user.mng.constant.AuthConstant;
@@ -34,7 +36,13 @@ public class AuthController {
 	 * @return ログイン画面
 	 */
 	@RequestMapping(value = "/login")
-	public String login() {
+	public String login(@RequestParam(value = "error", required = false) String error, Model model) {
+
+		if (Objects.nonNull(error)) {
+			List<String> errorList = new ArrayList<String>();
+			errorList.add(AuthConstant.LOGIN_ERROR);
+			model.addAttribute("validationError", errorList);
+		}
 		return "login";
 	}
 
