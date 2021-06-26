@@ -39,7 +39,7 @@
 							<label for="password">パスワード</label>
 							<input class="form-control form-group" type="password" id="password" name="password" placeholder="パスワード" />
 							<div class="justify-center">
-								<button class="btn btn-primary btn-md" type="submit">ログイン</button>
+								<button id="login-btn" class="btn btn-primary btn-md" type="submit" disabled>ログイン</button>
 								<a role="button" class="btn btn-link btn-md" href="/signup">新規登録</a>
 							</div>
 						</div>
@@ -54,6 +54,19 @@
 				$(this).remove();
 			});
 		}, 2000);
+
+		$(document).ready(function () {
+			const $loginBtn = $('#login-btn')
+
+			const $userId = $('#id').val()
+			$('#id, #password').on('change', function () {
+				if ($('#id').val() !== "" && $('#password').val() !== "") {
+					$loginBtn.prop('disabled', false)
+				} else {
+					$loginBtn.prop('disabled', true)
+				}
+			})
+		})
 	</script>
 </body>
 </html>
