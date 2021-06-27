@@ -350,6 +350,7 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserDetailResponseEntity getUser(Long id) throws DataNotFoundException {
 
+		// IDに紐づくユーザを取得する
 		TrnUser result = trnUserMapper.selectByPrimaryKey(id.intValue());
 
 		if (Objects.isNull(result)) {
@@ -357,9 +358,11 @@ public class UserServiceImpl implements UserService {
 			throw new DataNotFoundException(UserConstant.GET_USER_NOT_FOUND + id.toString());
 		}
 
+		// レスポンス用のエンティティを生成
 		UserDetailResponseEntity res = new UserDetailResponseEntity();
 		UserDetailEntity detail = new UserDetailEntity();
 
+		// 取得結果をセット
 		detail.setId(result.getId());
 		detail.setLastName(result.getLastName());
 		detail.setFirstName(result.getFirstName());
@@ -392,10 +395,15 @@ public class UserServiceImpl implements UserService {
 	 * @return IDに紐づくユーザ1件
 	 */
 	@Override
-	public UserEditResponseEntity getUserForEdit(Long id) {
+	public UserEditResponseEntity getUserForEdit(Long id) throws DataNotFoundException {
 
 		// ユーザの取得
 		TrnUser result = trnUserMapper.selectByPrimaryKey(id.intValue());
+
+		if (Objects.isNull(result)) {
+			// 取得結果が0件の場合、エラー
+			throw new DataNotFoundException(UserConstant.GET_USER_NOT_FOUND + id.toString());
+		}
 
 		UserEditResponseEntity res = new UserEditResponseEntity();
 
@@ -429,7 +437,7 @@ public class UserServiceImpl implements UserService {
 	 * @param id ユーザID
 	 */
 	@Override
-	public void updateUser(UserEditRequestEntity user) {
+	public void updateUser(UserEditRequestEntity user) throws DataNotFoundException {
 
 		// システム日時
 		Date now = new Date();
@@ -460,7 +468,10 @@ public class UserServiceImpl implements UserService {
 		// ユーザを更新
 		int cnt = trnUserMapper.updateByExampleSelective(record, filter);
 
-		// TODO 更新件数が1件でなければExceptionとする
+		if (cnt != 1) {
+			// 更新件数が1件でない場合、エラー
+			throw new DataNotFoundException(UserConstant.UPDATE_USER_NOT_FOUND + user.getId().toString());
+		}
 	}
 
 	/**
@@ -469,14 +480,15 @@ public class UserServiceImpl implements UserService {
 	 * @param id ユーザID
 	 */
 	@Override
-	public void deleteUser(Long id) {
-
-		// TODO 事前に対象ユーザが存在するかチェック
+	public void deleteUser(Long id) throws DataNotFoundException {
 
 		// ユーザの削除
-		trnUserMapper.deleteByPrimaryKey(id.intValue());
+		int cnt = trnUserMapper.deleteByPrimaryKey(id.intValue());
 
-		// TODO 削除件数が0件だったら例外とする
+		if (cnt != 1) {
+			// 削除件数が1件でない場合、エラー
+			throw new DataNotFoundException(UserConstant.DELETE_USER_NOT_FOUND + id.toString());
+		}
 	}
 
 	@Override

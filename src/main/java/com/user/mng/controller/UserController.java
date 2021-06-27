@@ -97,12 +97,21 @@ public class UserController {
 	 * @param id
 	 * @param model
 	 *
-	 * @return ユーザ詳細画面
+	 * @return ユーザ更新画面
 	 */
 	@RequestMapping(value = "/edit/{id}")
-	public String edit(@PathVariable Long id, Model model) {
+	public String edit(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
 
-		UserEditResponseEntity user = userService.getUserForEdit(id);
+		UserEditResponseEntity user = new UserEditResponseEntity();
+
+		try {
+			user = userService.getUserForEdit(id);
+		} catch (DataNotFoundException e) {
+			redirectAttributes.addFlashAttribute("exception", e.getMessage());
+
+			// エラー時は一覧画面へ戻す
+			return "redirect:/user/list/1";
+		}
 
 		model.addAttribute("title", UserConstant.TITLE_UPDATE);
 		model.addAttribute("userForEdit", user);
@@ -189,8 +198,19 @@ public class UserController {
 			return "edit";
 		}
 
-		// ユーザ更新処理
-		userService.updateUser(userEditRequestEntity);
+		try {
+			// ユーザ更新処理
+			userService.updateUser(userEditRequestEntity);
+		} catch (DataNotFoundException e) {
+			List<String> errorList = new ArrayList<String>();
+			errorList.add(e.getMessage());
+
+			model.addAttribute("title", UserConstant.TITLE_UPDATE);
+			model.addAttribute("validationError", errorList);
+			model.addAttribute("userForEdit", userEditRequestEntity);
+
+			return "edit";
+		}
 
 		redirectAttributes.addFlashAttribute("information", UserConstant.UPDATE_SUCCESS);
 
@@ -237,12 +257,19 @@ public class UserController {
 	 * @param id
 	 * @param model
 	 *
-	 * @return ユーザ詳細画面
+	 * @return ユーザ一覧画面
 	 */
 	@RequestMapping(value = "/delete/{id}")
 	public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
 
-		userService.deleteUser(id);
+		try {
+			userService.deleteUser(id);
+		} catch (DataNotFoundException e) {
+			redirectAttributes.addFlashAttribute("exception", e.getMessage());
+
+			// エラー時は一覧画面へ戻す
+			return "redirect:/user/list/1";
+		}
 
 		redirectAttributes.addFlashAttribute("information", UserConstant.DELETE_SUCCESS);
 

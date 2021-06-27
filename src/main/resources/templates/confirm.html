@@ -13,7 +13,8 @@
 	<div class="container">
 		<h2 th:text="${title}">ユーザ登録更新確認</h2>
 		<hr>
-		<h5>以下の内容で更新します。よろしいですか？</h5>
+		<h5 th:if="*{id}">以下の内容で更新します。よろしいですか？</h5>
+		<h5 th:unless="*{id}">以下の内容で登録します。よろしいですか？</h5>
 		<form th:action="@{${userForEdit.id} == null ? '/user/insert' : '/user/update'}" th:object="${userForEdit}" th:method="post">
 		 	<input type="hidden" th:field="*{id}">
 		 	<input type="hidden" th:field="*{lastNameKana}">
