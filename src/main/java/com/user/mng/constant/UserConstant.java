@@ -29,6 +29,11 @@ public final class UserConstant {
 	public static final String UPDATE_SUCCESS = "ユーザの更新が完了しました。";
 	public static final String DELETE_SUCCESS = "ユーザを削除しました。";
 
+	public static final String GET_USER_NOT_FOUND = "取得対象のユーザが存在しません。ID：";
+	public static final String UPDATE_USER_NOT_FOUND = "ユーザの更新に失敗しました。ID：";
+	public static final String DELETE_USER_NOT_FOUND = "削除対象のユーザが存在しません。ID：";
+	public static final String INSERT_FAILED = "ユーザの登録に失敗しました。";
+
 	// DB関連
 	public static final int DEFAULT_LIMIT = 10;
 

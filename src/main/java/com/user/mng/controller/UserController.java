@@ -23,6 +23,7 @@ import com.user.mng.domain.model.response.UserDetailResponseEntity;
 import com.user.mng.domain.model.response.UserEditResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
 import com.user.mng.domain.service.UserService;
+import com.user.mng.exceptions.DataNotFoundException;
 
 @Controller
 @RequestMapping(value = "/user")
@@ -70,9 +71,18 @@ public class UserController {
 	 * @return ユーザ詳細画面
 	 */
 	@RequestMapping(value = "/detail/{id}")
-	public String detail(@PathVariable Long id, Model model) {
+	public String detail(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
 
-		UserDetailResponseEntity user = userService.getUser(id);
+		UserDetailResponseEntity user = new UserDetailResponseEntity();
+
+		try {
+			user = userService.getUser(id);
+		} catch (DataNotFoundException e) {
+			redirectAttributes.addFlashAttribute("exception", e.getMessage());
+
+			// エラー時は一覧画面へ戻す
+			return "redirect:/user/list/1";
+		}
 
 		model.addAttribute("userDetail", user.getUser());
 
@@ -185,7 +195,7 @@ public class UserController {
 		redirectAttributes.addFlashAttribute("information", UserConstant.UPDATE_SUCCESS);
 
 		// 更新後は一覧画面へリダイレクト
-		return "redirect:/user/list";
+		return "redirect:/user/list/1";
 	}
 
 	/**
@@ -218,7 +228,7 @@ public class UserController {
 		redirectAttributes.addFlashAttribute("information", UserConstant.REGISTER_SUCCESS);
 
 		// 登録後後は一覧画面へリダイレクト
-		return "redirect:/user/list";
+		return "redirect:/user/list/1";
 	}
 
 	/**

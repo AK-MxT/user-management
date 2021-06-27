@@ -19,6 +19,7 @@ import com.user.mng.domain.model.response.UserDetailResponseEntity;
 import com.user.mng.domain.model.response.UserEditResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
 import com.user.mng.domain.repository.TrnUserMapper;
+import com.user.mng.exceptions.DataNotFoundException;
 import com.user.mng.utils.CommonUtils;
 
 @Service
@@ -38,7 +39,10 @@ public class UserServiceImpl implements UserService {
 	/**
 	 * ユーザリスト取得処理（ユーザ一覧画面）
 	 *
-	 * @return ユーザリスト
+	 * @param page 現在のページ数
+	 * @param userListRequestEntity 検索条件
+	 *
+	 * @return ユーザデータのリスト
 	 */
 	@Override
 	public UserListResponseEntity getUserList(Integer page, UserListRequestEntity userListRequestEntity) {
@@ -285,7 +289,14 @@ public class UserServiceImpl implements UserService {
 		return res;
 	}
 
-
+	/**
+	 * IDの検索条件の指定状態をチェックする
+	 *
+	 * @param idStart IDの始点
+	 * @param idEnd IDの終点
+	 *
+	 * @return 指定状態の区分値（0: 始点だけ指定 / 1: 終点だけ指定 / 2: 両方指定 / 3: 指定なし）
+	 */
 	private String checkId(Integer idStart, Integer idEnd) {
 		if (Objects.isNull(idStart)) {
 			if (Objects.isNull(idEnd)) {
@@ -298,6 +309,14 @@ public class UserServiceImpl implements UserService {
 		return BOTH;
 	}
 
+	/**
+	 * 名前の検索条件の指定状態をチェックする
+	 *
+	 * @param lastName 姓
+	 * @param firstName 名
+	 *
+	 * @return 指定状態の区分値（0: 姓だけ指定 / 1: 名だけ指定 / 2: 両方指定 / 3: 指定なし）
+	 */
 	private String checkNames(String lastName, String firstName) {
 		if (StringUtils.isBlank(lastName)) {
 			if (StringUtils.isBlank(firstName)) {
@@ -310,6 +329,13 @@ public class UserServiceImpl implements UserService {
 		return BOTH;
 	}
 
+	/**
+	 * 性別の検索条件の指定状態をチェックする
+	 *
+	 * @param gender 性別
+	 *
+	 * @return 指定がなければ「3 (未指定)」、あればgenderをそのまま返却
+	 */
 	private String checkGender(String gender) {
 		return StringUtils.isBlank(gender) ? NONE : gender;
 	}
@@ -322,9 +348,14 @@ public class UserServiceImpl implements UserService {
 	 * @return IDに紐づくユーザ1件
 	 */
 	@Override
-	public UserDetailResponseEntity getUser(Long id) {
+	public UserDetailResponseEntity getUser(Long id) throws DataNotFoundException {
 
 		TrnUser result = trnUserMapper.selectByPrimaryKey(id.intValue());
+
+		if (Objects.isNull(result)) {
+			// 取得結果が0件の場合、エラー
+			throw new DataNotFoundException(UserConstant.GET_USER_NOT_FOUND + id.toString());
+		}
 
 		UserDetailResponseEntity res = new UserDetailResponseEntity();
 		UserDetailEntity detail = new UserDetailEntity();
