@@ -1,5 +1,10 @@
 @charset "UTF-8";
 
+#login-hint {
+	color: red;
+	font-size: 12px;
+}
+
 .required {
 	color: red;
 	font-size: 12px;

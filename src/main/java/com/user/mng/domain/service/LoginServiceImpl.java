@@ -11,6 +11,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 import org.thymeleaf.util.StringUtils;
 
 import com.user.mng.constant.AuthConstant;
@@ -19,21 +20,35 @@ import com.user.mng.domain.model.TrnAccount;
 import com.user.mng.domain.model.TrnAccountExample;
 import com.user.mng.domain.model.entity.AccountEntity;
 import com.user.mng.domain.repository.TrnAccountMapper;
+import com.user.mng.exceptions.ServiceLogicException;
 
+/**
+ * ログイン管理サービス
+ * SpringSecurityが用意しているUserDetailsServiceの実装クラス
+ * ログイン管理をDBで行いたい場合に必要
+ */
 @Service
 public class LoginServiceImpl implements UserDetailsService {
 
+	// アカウント管理テーブルのマッパー
 	private final TrnAccountMapper trnAccountMapper;
 
 	public LoginServiceImpl(TrnAccountMapper trnAccountMapper) {
 		this.trnAccountMapper = trnAccountMapper;
 	}
 
+	/**
+	 * ログイン認証処理
+	 *
+	 * @param userName ユーザID
+	 *
+	 * @return アカウント情報
+	 */
 	@Override
 	public UserDetails loadUserByUsername(String userName) throws UsernameNotFoundException {
 
 		if (StringUtils.isEmpty(userName)) {
-			throw new UsernameNotFoundException("username is empty.");
+			throw new UsernameNotFoundException(AuthConstant.USERID_IS_EMPTY);
 		}
 
 		// 検索条件
@@ -44,7 +59,7 @@ public class LoginServiceImpl implements UserDetailsService {
 
 		if (accountList.size() != 1) {
 			// 取得結果が1件でない場合、エラー
-			throw new UsernameNotFoundException("username is not unique.");
+			throw new UsernameNotFoundException(AuthConstant.ACCOUNT_DUPLICATED);
 		}
 
 		// 取得したユーザをセット
@@ -58,7 +73,13 @@ public class LoginServiceImpl implements UserDetailsService {
 		return new AccountEntity(account);
 	}
 
-
+	/**
+	 * アカウント登録処理
+	 *
+	 * @param userName
+	 * @param password
+	 */
+	@Transactional
 	public void registerAccount(String userName, String password) {
 
 		// 検索条件
@@ -69,8 +90,7 @@ public class LoginServiceImpl implements UserDetailsService {
 
 		if (accountList.size() != 0) {
 			// 取得結果が0件でない場合、既に使われているユーザ名のため、エラー
-			// TODO 適切な例外クラスを指定する
-			throw new UsernameNotFoundException("This userName is already exists.");
+			throw new ServiceLogicException(AuthConstant.USERID_ALREADY_EXISTS);
 		}
 
 		// システム日時

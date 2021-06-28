@@ -7,6 +7,7 @@ import java.util.Objects;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import com.user.mng.constant.UserConstant;
 import com.user.mng.domain.model.TrnUser;
@@ -25,8 +26,10 @@ import com.user.mng.utils.CommonUtils;
 @Service
 public class UserServiceImpl implements UserService {
 
+	// ユーザ情報テーブルのマッパー
 	private final TrnUserMapper trnUserMapper;
 
+	// 検索条件の区分値
 	private static final String START = "0";
 	private static final String END = "1";
 	private static final String BOTH = "2";
@@ -47,10 +50,16 @@ public class UserServiceImpl implements UserService {
 	@Override
 	public UserListResponseEntity getUserList(Integer page, UserListRequestEntity userListRequestEntity) {
 
+		// IDの検索条件指定状態
 		String idStatus = this.checkId(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd());
+
+		// 姓名の検索条件指定状態
 		String nameStatus = this.checkNames(userListRequestEntity.getLastName(), userListRequestEntity.getFirstName());
+
+		// 性別の検索条件指定状態
 		String genderStatus = this.checkGender(userListRequestEntity.getGender());
 
+		// 検索条件
 		TrnUserExample filter = new TrnUserExample();
 
 		// 検索条件の設定
@@ -62,7 +71,8 @@ public class UserServiceImpl implements UserService {
 				case UserConstant.GENDER_MAN:
 				case UserConstant.GENDER_WOMAN:
 					filter.createCriteria().andIdGreaterThanOrEqualTo(userListRequestEntity.getIdStart())
-							.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName())).andGenderEqualTo(genderStatus);
+							.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
+							.andGenderEqualTo(genderStatus);
 					break;
 				}
 				filter.createCriteria().andIdGreaterThanOrEqualTo(userListRequestEntity.getIdStart())
@@ -73,7 +83,8 @@ public class UserServiceImpl implements UserService {
 				case UserConstant.GENDER_MAN:
 				case UserConstant.GENDER_WOMAN:
 					filter.createCriteria().andIdGreaterThanOrEqualTo(userListRequestEntity.getIdStart())
-							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName())).andGenderEqualTo(genderStatus);
+							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()))
+							.andGenderEqualTo(genderStatus);
 					break;
 				}
 				filter.createCriteria().andIdGreaterThanOrEqualTo(userListRequestEntity.getIdStart())
@@ -85,7 +96,8 @@ public class UserServiceImpl implements UserService {
 				case UserConstant.GENDER_WOMAN:
 					filter.createCriteria().andIdGreaterThanOrEqualTo(userListRequestEntity.getIdStart())
 							.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
-							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName())).andGenderEqualTo(genderStatus);
+							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()))
+							.andGenderEqualTo(genderStatus);
 					break;
 				}
 				filter.createCriteria().andIdGreaterThanOrEqualTo(userListRequestEntity.getIdStart())
@@ -111,7 +123,8 @@ public class UserServiceImpl implements UserService {
 				case UserConstant.GENDER_MAN:
 				case UserConstant.GENDER_WOMAN:
 					filter.createCriteria().andIdLessThanOrEqualTo(userListRequestEntity.getIdEnd())
-							.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName())).andGenderEqualTo(genderStatus);
+							.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
+							.andGenderEqualTo(genderStatus);
 					break;
 				}
 				filter.createCriteria().andIdLessThanOrEqualTo(userListRequestEntity.getIdEnd())
@@ -122,7 +135,8 @@ public class UserServiceImpl implements UserService {
 				case UserConstant.GENDER_MAN:
 				case UserConstant.GENDER_WOMAN:
 					filter.createCriteria().andIdLessThanOrEqualTo(userListRequestEntity.getIdEnd())
-							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName())).andGenderEqualTo(genderStatus);
+							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()))
+							.andGenderEqualTo(genderStatus);
 					break;
 				}
 				filter.createCriteria().andIdLessThanOrEqualTo(userListRequestEntity.getIdEnd())
@@ -134,7 +148,8 @@ public class UserServiceImpl implements UserService {
 				case UserConstant.GENDER_WOMAN:
 					filter.createCriteria().andIdLessThanOrEqualTo(userListRequestEntity.getIdEnd())
 							.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
-							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName())).andGenderEqualTo(genderStatus);
+							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()))
+							.andGenderEqualTo(genderStatus);
 					break;
 				}
 				filter.createCriteria().andIdLessThanOrEqualTo(userListRequestEntity.getIdEnd())
@@ -159,34 +174,43 @@ public class UserServiceImpl implements UserService {
 				switch (genderStatus) {
 				case UserConstant.GENDER_MAN:
 				case UserConstant.GENDER_WOMAN:
-					filter.createCriteria().andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
-							.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName())).andGenderEqualTo(genderStatus);
+					filter.createCriteria()
+							.andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
+							.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
+							.andGenderEqualTo(genderStatus);
 					break;
 				}
-				filter.createCriteria().andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
+				filter.createCriteria()
+						.andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
 						.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()));
 				break;
 			case END:
 				switch (genderStatus) {
 				case UserConstant.GENDER_MAN:
 				case UserConstant.GENDER_WOMAN:
-					filter.createCriteria().andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
-							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName())).andGenderEqualTo(genderStatus);
+					filter.createCriteria()
+							.andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
+							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()))
+							.andGenderEqualTo(genderStatus);
 					break;
 				}
-				filter.createCriteria().andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
+				filter.createCriteria()
+						.andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
 						.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()));
 				break;
 			case BOTH:
 				switch (genderStatus) {
 				case UserConstant.GENDER_MAN:
 				case UserConstant.GENDER_WOMAN:
-					filter.createCriteria().andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
+					filter.createCriteria()
+							.andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
 							.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
-							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName())).andGenderEqualTo(genderStatus);
+							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()))
+							.andGenderEqualTo(genderStatus);
 					break;
 				}
-				filter.createCriteria().andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
+				filter.createCriteria()
+						.andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
 						.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
 						.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()));
 				break;
@@ -194,11 +218,13 @@ public class UserServiceImpl implements UserService {
 				switch (genderStatus) {
 				case UserConstant.GENDER_MAN:
 				case UserConstant.GENDER_WOMAN:
-					filter.createCriteria().andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
+					filter.createCriteria()
+							.andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd())
 							.andGenderEqualTo(genderStatus);
 					break;
 				}
-				filter.createCriteria().andIdBetween(userListRequestEntity.getIdStart(), userListRequestEntity.getIdEnd());
+				filter.createCriteria().andIdBetween(userListRequestEntity.getIdStart(),
+						userListRequestEntity.getIdEnd());
 				break;
 			}
 			break;
@@ -208,7 +234,9 @@ public class UserServiceImpl implements UserService {
 				switch (genderStatus) {
 				case UserConstant.GENDER_MAN:
 				case UserConstant.GENDER_WOMAN:
-					filter.createCriteria().andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName())).andGenderEqualTo(genderStatus);
+					filter.createCriteria()
+							.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
+							.andGenderEqualTo(genderStatus);
 					break;
 				}
 				filter.createCriteria().andLastNameLike("%" + userListRequestEntity.getLastName() + "%");
@@ -217,20 +245,26 @@ public class UserServiceImpl implements UserService {
 				switch (genderStatus) {
 				case UserConstant.GENDER_MAN:
 				case UserConstant.GENDER_WOMAN:
-					filter.createCriteria().andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName())).andGenderEqualTo(genderStatus);
+					filter.createCriteria()
+							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()))
+							.andGenderEqualTo(genderStatus);
 					break;
 				}
-				filter.createCriteria().andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()));
+				filter.createCriteria()
+						.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()));
 				break;
 			case BOTH:
 				switch (genderStatus) {
 				case UserConstant.GENDER_MAN:
 				case UserConstant.GENDER_WOMAN:
-					filter.createCriteria().andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
-							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName())).andGenderEqualTo(genderStatus);
+					filter.createCriteria()
+							.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
+							.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()))
+							.andGenderEqualTo(genderStatus);
 					break;
 				}
-				filter.createCriteria().andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
+				filter.createCriteria()
+						.andLastNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getLastName()))
 						.andFirstNameLike(CommonUtils.generateLikeFormat(userListRequestEntity.getFirstName()));
 				break;
 			case NONE:
@@ -344,6 +378,7 @@ public class UserServiceImpl implements UserService {
 	 * ユーザ取得処理（ユーザ詳細画面）
 	 *
 	 * @param id ユーザID
+	 * @throws DataNotFoundException
 	 *
 	 * @return IDに紐づくユーザ1件
 	 */
@@ -391,6 +426,7 @@ public class UserServiceImpl implements UserService {
 	 * ユーザ取得処理（更新用のデータ取得）
 	 *
 	 * @param id ユーザID
+	 * @throws DataNotFoundException
 	 *
 	 * @return IDに紐づくユーザ1件
 	 */
@@ -434,9 +470,11 @@ public class UserServiceImpl implements UserService {
 	/**
 	 * ユーザ更新処理
 	 *
-	 * @param id ユーザID
+	 * @param user 更新するユーザのデータ
+	 * @throws DataNotFoundException
 	 */
 	@Override
+	@Transactional
 	public void updateUser(UserEditRequestEntity user) throws DataNotFoundException {
 
 		// システム日時
@@ -478,8 +516,10 @@ public class UserServiceImpl implements UserService {
 	 * ユーザ削除処理
 	 *
 	 * @param id ユーザID
+	 * @throws DataNotFoundException
 	 */
 	@Override
+	@Transactional
 	public void deleteUser(Long id) throws DataNotFoundException {
 
 		// ユーザの削除
@@ -491,7 +531,13 @@ public class UserServiceImpl implements UserService {
 		}
 	}
 
+	/**
+	 * ユーザ登録処理
+	 *
+	 * @param user 登録するユーザのデータ
+	 */
 	@Override
+	@Transactional
 	public void insertUser(UserEditRequestEntity user) {
 
 		// システム日時
@@ -522,6 +568,6 @@ public class UserServiceImpl implements UserService {
 		record.setUpdateDate(now);
 
 		// ユーザを登録
-		int cnt = trnUserMapper.insertSelective(record);
+		trnUserMapper.insertSelective(record);
 	}
 }
