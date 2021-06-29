@@ -10,8 +10,10 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -99,7 +101,7 @@ public class UserController {
 	 *
 	 * @return ユーザ更新画面
 	 */
-	@RequestMapping(value = "/edit/{id}")
+	@GetMapping(value = "/edit/{id}")
 	public String edit(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
 
 		UserEditResponseEntity user = new UserEditResponseEntity();
@@ -115,6 +117,26 @@ public class UserController {
 
 		model.addAttribute("title", UserConstant.TITLE_UPDATE);
 		model.addAttribute("userForEdit", user);
+
+		// src/main/resources/templates/edit.html を呼び出す
+		return "edit";
+	}
+
+	/**
+	 * 確認画面から戻る
+	 * 更新確認画面から戻る際の処理（更新メソッドではない）
+	 *
+	 * @param id
+	 * @param userConfirmRequestEntity
+	 * @param model
+	 *
+	 * @return ユーザ更新画面
+	 */
+	@PostMapping(value = "/edit/{id}")
+	public String edit(@PathVariable Long id, UserConfirmRequestEntity userConfirmRequestEntity, Model model) {
+
+		model.addAttribute("title", UserConstant.TITLE_UPDATE);
+		model.addAttribute("userForEdit", userConfirmRequestEntity);
 
 		// src/main/resources/templates/edit.html を呼び出す
 		return "edit";

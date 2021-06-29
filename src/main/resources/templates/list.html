@@ -180,8 +180,7 @@
 			<th:block th:each="i : ${#numbers.sequence(1, searchItems.paging)}">
 				<li class="page-item"
 					th:classappend="(${i}==${page})? 'active' : ''"><a
-					name="offset" th:value="${i}" class="page-link" th:text="${i}"
-					href="#"
+					class="page-link" th:text="${i}" href="#"
 					th:onClick="'formSubmit(' + '\'/user/list/' + ${i} + '\')'">1</a></li>
 			</th:block>
 			<li class="page-item"

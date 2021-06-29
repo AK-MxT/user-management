@@ -15,7 +15,7 @@
 		<hr>
 		<h5 th:if="*{id}">以下の内容で更新します。よろしいですか？</h5>
 		<h5 th:unless="*{id}">以下の内容で登録します。よろしいですか？</h5>
-		<form th:action="@{${userForEdit.id} == null ? '/user/insert' : '/user/update'}" th:object="${userForEdit}" th:method="post">
+		<form id="editItems" th:action="@{${userForEdit.id} == null ? '/user/insert' : '/user/update'}" th:object="${userForEdit}" th:method="post">
 		 	<input type="hidden" th:field="*{id}">
 		 	<input type="hidden" th:field="*{lastNameKana}">
 		 	<input type="hidden" th:field="*{firstNameKana}">
@@ -96,13 +96,26 @@
 				</tr>
 			</table>
 			<div>
-				<a role="button" class="btn btn-secondary btn-sm"
-					th:href="@{/user/edit/{id}(id=*{id})}">キャンセル</a>
+				<a role="button" class="btn btn-secondary btn-sm" href="#"
+					th:onClick="'formSubmit(' + '\'/user/edit/' + ${userForEdit.id} + '\')'">キャンセル</a>
 				<input type="submit"
                     th:value="*{id} == null ? '登録' : '更新'" class="btn btn-primary btn-sm">
 			</div>
 		</form>
 	</div>
 	<div th:replace="layout :: footer"></div>
+	<script>
+		// 引数で指定されたパスでサブミットする
+		function formSubmit(path) {
+			let form = document.getElementById('editItems');
+			if (!form) {
+				alert('フォームが取得できませんでした');
+				return;
+			}
+			form.action = path;
+			form.method = "post";
+			form.submit();
+		};
+	</script>
 </body>
 </html>
