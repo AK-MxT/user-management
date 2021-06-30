@@ -15,6 +15,7 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
 import com.user.mng.constant.UserConstant;
@@ -40,7 +41,7 @@ public class UserController {
 	 * @param model
 	 * @return ユーザ一覧画面
 	 */
-	@RequestMapping(value = "/list/{page}")
+	@RequestMapping(value = "/list/{page}", method = { RequestMethod.GET, RequestMethod.POST })
 	public String list(@PathVariable @Validated Integer page, UserListRequestEntity userListRequestEntity, Model model, BindingResult result) {
 
 		if (result.hasErrors()) {
@@ -72,7 +73,7 @@ public class UserController {
 	 *
 	 * @return ユーザ詳細画面
 	 */
-	@RequestMapping(value = "/detail/{id}")
+	@GetMapping(value = "/detail/{id}")
 	public String detail(@PathVariable Long id, Model model, RedirectAttributes redirectAttributes) {
 
 		UserDetailResponseEntity user = new UserDetailResponseEntity();
@@ -124,7 +125,7 @@ public class UserController {
 
 	/**
 	 * 確認画面から戻る
-	 * 更新確認画面から戻る際の処理（更新メソッドではない）
+	 * 更新確認画面から戻る際の処理
 	 *
 	 * @param id
 	 * @param userConfirmRequestEntity
@@ -150,11 +151,30 @@ public class UserController {
 	 *
 	 * @return ユーザ登録画面
 	 */
-	@RequestMapping(value = "/new")
+	@GetMapping(value = "/new")
 	public String register(Model model) {
 
 		model.addAttribute("title", UserConstant.TITLE_REGISTER);
 		model.addAttribute("userForEdit", new UserEditRequestEntity());
+
+		// src/main/resources/templates/edit.html を呼び出す
+		return "edit";
+	}
+
+	/**
+	 * 確認画面から戻る
+	 * 登録確認画面から戻る際の処理
+	 *
+	 * @param userConfirmRequestEntity
+	 * @param model
+	 *
+	 * @return ユーザ登録画面
+	 */
+	@PostMapping(value = "/new")
+	public String register(UserConfirmRequestEntity userConfirmRequestEntity, Model model) {
+
+		model.addAttribute("title", UserConstant.TITLE_REGISTER);
+		model.addAttribute("userForEdit", userConfirmRequestEntity);
 
 		// src/main/resources/templates/edit.html を呼び出す
 		return "edit";
@@ -169,7 +189,7 @@ public class UserController {
 	 *
 	 * @return ユーザ確認画面
 	 */
-	@RequestMapping(value = "/confirm")
+	@PostMapping(value = "/confirm")
 	public String confirm(@Validated @ModelAttribute UserConfirmRequestEntity userConfirmRequestEntity,
 			BindingResult result, Model model) {
 
@@ -204,7 +224,7 @@ public class UserController {
 	 *
 	 * @return ユーザ一覧画面
 	 */
-	@RequestMapping(value = "/update")
+	@PostMapping(value = "/update")
 	public String update(@Validated @ModelAttribute UserEditRequestEntity userEditRequestEntity,
 			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 
@@ -248,7 +268,7 @@ public class UserController {
 	 *
 	 * @return ユーザ一覧画面
 	 */
-	@RequestMapping(value = "/insert")
+	@PostMapping(value = "/insert")
 	public String insert(@Validated @ModelAttribute UserEditRequestEntity userEditRequestEntity,
 			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 
@@ -281,7 +301,7 @@ public class UserController {
 	 *
 	 * @return ユーザ一覧画面
 	 */
-	@RequestMapping(value = "/delete/{id}")
+	@PostMapping(value = "/delete/{id}")
 	public String delete(@PathVariable Long id, RedirectAttributes redirectAttributes) {
 
 		try {

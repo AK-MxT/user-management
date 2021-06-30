@@ -31,6 +31,7 @@
 		 	<input type="hidden" th:field="*{address4}">
 		 	<input type="hidden" th:field="*{phoneNumber}">
 		 	<input type="hidden" th:field="*{remarks}">
+		 	<input type="hidden" th:field="*{insertUser}">
 		 	<input type="hidden" th:field="*{updateUser}">
 
 			<table class="table table-borderd">
@@ -96,8 +97,10 @@
 				</tr>
 			</table>
 			<div>
-				<a role="button" class="btn btn-secondary btn-sm" href="#"
+				<a th:if="*{id}" role="button" class="btn btn-secondary btn-sm" href="#"
 					th:onClick="'formSubmit(' + '\'/user/edit/' + ${userForEdit.id} + '\')'">キャンセル</a>
+				<a th:unless="*{id}" role="button" class="btn btn-secondary btn-sm" href="#"
+					th:onClick="formSubmit('/user/new')">キャンセル</a>
 				<input type="submit"
                     th:value="*{id} == null ? '登録' : '更新'" class="btn btn-primary btn-sm">
 			</div>
