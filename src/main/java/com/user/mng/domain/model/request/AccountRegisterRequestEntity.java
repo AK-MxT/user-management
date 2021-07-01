@@ -12,9 +12,10 @@ import lombok.Data;
 @Data
 public class AccountRegisterRequestEntity {
 
-	// ユーザ名
-	@NotEmpty(message = "ユーザ名は必須項目です")
-	@Size(max = 20, message = "ユーザ名は20文字以内で入力してください")
+	// ユーザID
+	@NotEmpty(message = "ユーザIDは必須項目です")
+	@Size(max = 20, message = "ユーザIDは20文字以内で入力してください")
+	@Pattern(regexp = "^[0-9a-zA-Z]*$", message = "ユーザIDは半角英数字で入力してください")
 	private String userName;
 
 	// パスワード

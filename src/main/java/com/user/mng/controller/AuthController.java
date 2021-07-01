@@ -32,7 +32,9 @@ public class AuthController {
 	/**
 	 * ログイン画面
 	 *
+	 * @param error
 	 * @param model
+	 *
 	 * @return ログイン画面
 	 */
 	@RequestMapping(value = "/login")
@@ -43,6 +45,7 @@ public class AuthController {
 			errorList.add(AuthConstant.LOGIN_ERROR);
 			model.addAttribute("validationError", errorList);
 		}
+
 		return "login";
 	}
 
@@ -61,7 +64,7 @@ public class AuthController {
 	/**
 	 * アカウント登録
 	 *
-	 * @param AccountRegisterRequestEntity アカウント登録用のリクエストエンティティ
+	 * @param accountRegisterRequestEntity アカウント登録用のリクエストエンティティ
 	 * @return ログイン画面
 	 */
 	@RequestMapping(value = "/register")
