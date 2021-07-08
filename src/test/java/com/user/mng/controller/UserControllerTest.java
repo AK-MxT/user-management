@@ -15,8 +15,11 @@ import org.springframework.security.test.context.support.WithUserDetails;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 
+import com.github.springtestdbunit.annotation.DbUnitConfiguration;
+import com.user.mng.config.CsvDataSetLoader;
 import com.user.mng.domain.service.UserService;
 
+@DbUnitConfiguration(dataSetLoader = CsvDataSetLoader.class)
 @SpringBootTest
 @AutoConfigureMockMvc
 class UserControllerTest {
