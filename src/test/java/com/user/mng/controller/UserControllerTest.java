@@ -12,16 +12,28 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.security.test.context.support.WithUserDetails;
+import org.springframework.test.context.TestExecutionListeners;
+import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
+import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Transactional;
 
+import com.github.springtestdbunit.DbUnitTestExecutionListener;
+import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
+import com.user.mng.UserMngMockApplication;
 import com.user.mng.config.CsvDataSetLoader;
 import com.user.mng.domain.service.UserService;
 
-@DbUnitConfiguration(dataSetLoader = CsvDataSetLoader.class)
-@SpringBootTest
 @AutoConfigureMockMvc
+@DbUnitConfiguration(dataSetLoader = CsvDataSetLoader.class)
+@TestExecutionListeners({
+		DependencyInjectionTestExecutionListener.class,
+		TransactionalTestExecutionListener.class,
+		DbUnitTestExecutionListener.class
+})
+@SpringBootTest(classes = {UserMngMockApplication.class})
 class UserControllerTest {
 
 	// mockMvc TomcatサーバへデプロイすることなくHTTPリクエスト・レスポンスを扱うためのMockオブジェクト
@@ -40,6 +52,8 @@ class UserControllerTest {
 	}
 
 	@Test
+	@DatabaseSetup("/data/management.trn_user.csv")
+	@Transactional
 	@WithAnonymousUser
 	void ログインせずにアクセスするとリダイレクトされる() throws Exception {
 		this.mockmvc.perform(get("/user/list/1")).andExpect(status().is3xxRedirection());
@@ -47,6 +61,8 @@ class UserControllerTest {
 	}
 
 	@Test
+	@DatabaseSetup("/data/management.trn_user.csv")
+	@Transactional
 	@WithUserDetails("user001")
 	void ログイン後にアクセスすると正常終了() throws Exception {
 		this.mockmvc.perform(get("/user/list/1")).andDo(print()).andExpect(status().isOk());
