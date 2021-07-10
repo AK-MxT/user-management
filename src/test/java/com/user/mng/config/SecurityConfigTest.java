@@ -10,7 +10,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
 public class SecurityConfigTest {
 
-	@Bean
+	@Bean("hogehoge")
 	@Profile("test")
 	public UserDetailsService userDetailsService() {
 		return new UserDetailsService() {

@@ -1,3 +1,0 @@
-id,user_name,password,admin_flg,remarks,insert_user,insert_date,update_user,update_date,delete_flg
-1,"user001","$2a$10$FC8lV5oXu3xrP38DVczhdezOFvf32UQMtJy.HD.B9BbXvuVKYEpm2",0,"","system","2021-06-17 00:07:10","system","2021-06-17 00:07:10",0
-2,"user002","$2a$10$DyCI0l2PFJsxG6xuf5HitOZxxy.J0Cnn2r93rlV8MrnX87Ajmlbzy",0,"","system","2021-06-17 02:43:26","system","2021-06-17 02:43:26",0

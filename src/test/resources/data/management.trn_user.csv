@@ -1,4 +1,0 @@
-id,last_name,first_name,last_name_kana,first_name_kana,gender,birthday,postal_code,prefecture,address1,address2,address3,address4,phone_number,remarks,insert_user,insert_date,update_user,update_date,delete_flg
-1,"テスト","ユーザ01","テスト","ユーザゼロイチ","0","1997-10-20","1234567","東京都","A市","B町","1","","0000000000","test","system","2021-05-16 00:00:00","system","2021-06-29 21:58:50",0
-2,"テスト","ユーザ02","テスト","ユーザゼロニ","1","1979-11-12","1234567","東京都","A市","B町","2","","0000000000","test","system","2021-05-16 00:00:00","system","2021-07-01 01:35:08",0
-3,"テスト","ユーザ03","テスト","ユーザゼロサン","0","1984-05-11","1234567","東京都","A市","B町","3","","0000000000","test","system","2021-05-24 00:38:18","system","2021-06-30 01:37:06",0

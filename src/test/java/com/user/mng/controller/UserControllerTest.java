@@ -1,5 +1,6 @@
 package com.user.mng.controller;
 
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -48,11 +49,11 @@ class UserControllerTest {
 
 	@Before
 	public void setup() {
-		mockmvc = MockMvcBuilders.standaloneSetup(target).build();
+		mockmvc = MockMvcBuilders.standaloneSetup(target).apply(springSecurity()).build();
 	}
 
 	@Test
-	@DatabaseSetup("/data/management.trn_user.csv")
+	@DatabaseSetup("/data/")
 	@Transactional
 	@WithAnonymousUser
 	void ログインせずにアクセスするとリダイレクトされる() throws Exception {
@@ -61,9 +62,9 @@ class UserControllerTest {
 	}
 
 	@Test
-	@DatabaseSetup("/data/management.trn_user.csv")
+	@DatabaseSetup("/data/")
 	@Transactional
-	@WithUserDetails("user001")
+	@WithUserDetails(value = "user001", userDetailsServiceBeanName = "hogehoge")
 	void ログイン後にアクセスすると正常終了() throws Exception {
 		this.mockmvc.perform(get("/user/list/1")).andDo(print()).andExpect(status().isOk());
 		//		.andExpect(view().name("login"));
