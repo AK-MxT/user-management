@@ -7,7 +7,6 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Jsr330ScopeMetadataResolver;
 
 @SpringBootApplication
-
 // Mapperクラスのパッケージを正しく指定する。
 // 1個上のdomainとかで指定すると関係ないクラスまでScanしようとしてエラーになる
 @MapperScan("com.user.mng.domain.repository")
