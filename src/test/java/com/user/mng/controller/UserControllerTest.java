@@ -2,6 +2,7 @@ package com.user.mng.controller;
 
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
+import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
@@ -14,12 +15,14 @@ import org.mockito.MockitoAnnotations;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.security.test.context.support.WithAnonymousUser;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.WebApplicationContext;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
@@ -39,13 +42,19 @@ import com.user.mng.domain.service.UserService;
 @SpringBootTest
 class UserControllerTest {
 
-	// mockMvc TomcatサーバへデプロイすることなくHTTPリクエスト・レスポンスを扱うためのMockオブジェクト
+
+	@Autowired
+	WebApplicationContext wac;
+
+	// TomcatサーバへデプロイすることなくHTTPリクエスト・レスポンスを扱うためのMockオブジェクト
 	@Autowired
 	private MockMvc mockmvc;
 
+	// テスト対象のControllerが依存しているServiceクラス
 	@Mock
 	UserService mockUserService;
 
+	// テスト対象のController
 	@InjectMocks
 	UserController userController;
 
@@ -53,31 +62,43 @@ class UserControllerTest {
 	public void setup() {
         // 各テストの実行前にモックオブジェクトを初期化する
         MockitoAnnotations.openMocks(this);
-		this.mockmvc = MockMvcBuilders.standaloneSetup(userController).build();
+		this.mockmvc = MockMvcBuilders.webAppContextSetup(wac).apply(springSecurity()).build();
 	}
 
-//	@Test
-//	@DatabaseSetup("/data/")
-//	@Transactional
-//	@WithMockUser
-////	@WithAnonymousUser
-//	void ログインせずにアクセスするとリダイレクトされる() throws Exception {
-//		this.mockmvc.perform(get("/user/list/1")).andExpect(status().is3xxRedirection());
-//		//		.andExpect(view().name("login"));
-//	}
+	/**
+	 * 一覧画面系テスト
+	 */
+
+	@Test
+	@DatabaseSetup("/data/")
+	@Transactional
+	@WithAnonymousUser
+	void getList未ログイン() throws Exception {
+
+		UserListResponseEntity list = new UserListResponseEntity();
+		UserListRequestEntity req = new UserListRequestEntity();
+		when(mockUserService.getUserList(1, req)).thenReturn(list);
+
+		this.mockmvc.perform(get("/user/list/1"))
+			.andDo(print())
+			.andExpect(status().is3xxRedirection());
+//			.andExpect(view().name("login"));
+	}
 
 	@Test
 	@DatabaseSetup("/data/")
 	@Transactional
 //	@WithUserDetails("user001")
 //	@WithMockUser(username = "username", roles = {"USER"})
-	void ログイン後にアクセスすると正常終了() throws Exception {
+	void getListログイン済() throws Exception {
 
 		UserListResponseEntity list = new UserListResponseEntity();
-		when(mockUserService.getUserList(1, new UserListRequestEntity())).thenReturn(list);
+		UserListRequestEntity req = new UserListRequestEntity();
+		when(mockUserService.getUserList(1, req)).thenReturn(list);
 
 		this.mockmvc.perform(get("/user/list/1").with(user("username").roles("USER")))
 			.andDo(print())
+			.andExpect(status().isOk())
 			.andExpect(model().attribute("page", 1))
 //			.andExpect(model().attribute("searchItems", req))
 			.andExpect(model().attribute("list", list.getUserList()))
