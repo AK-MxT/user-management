@@ -82,7 +82,6 @@ class UserControllerTest {
 		this.mockmvc.perform(get("/user/list/1"))
 			.andDo(print())
 			.andExpect(status().is3xxRedirection());
-//			.andExpect(view().name("login"));
 	}
 
 	@Test
@@ -94,14 +93,18 @@ class UserControllerTest {
 
 		UserListResponseEntity list = new UserListResponseEntity();
 		UserListRequestEntity req = new UserListRequestEntity();
+		req.setPaging(1);
 		when(mockUserService.getUserList(1, req)).thenReturn(list);
 
 		this.mockmvc.perform(get("/user/list/1").with(user("username").roles("USER")))
 			.andDo(print())
+			.andExpect(model().hasNoErrors())
 			.andExpect(status().isOk())
 			.andExpect(model().attribute("page", 1))
-//			.andExpect(model().attribute("searchItems", req))
-			.andExpect(model().attribute("list", list.getUserList()))
+			.andExpect(model().attribute("searchItems", req))
+//			.andExpect(model().attribute("list", list.getUserList()))
 			.andExpect(view().name("list"));
+
+//		verify(mockUserService, times(1)).getUserList(1, req);
 	}
 }
