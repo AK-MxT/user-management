@@ -1,5 +1,6 @@
 package com.user.mng.controller;
 
+import static org.hamcrest.Matchers.*;
 import static org.mockito.Mockito.*;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.*;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.*;
@@ -73,7 +74,7 @@ class UserControllerTest {
 	@DatabaseSetup("/data/")
 	@Transactional
 	@WithAnonymousUser
-	void getList未ログイン() throws Exception {
+	void 未ログインで一覧取得() throws Exception {
 
 		UserListResponseEntity list = new UserListResponseEntity();
 		UserListRequestEntity req = new UserListRequestEntity();
@@ -102,9 +103,35 @@ class UserControllerTest {
 			.andExpect(status().isOk())
 			.andExpect(model().attribute("page", 1))
 			.andExpect(model().attribute("searchItems", req))
-//			.andExpect(model().attribute("list", list.getUserList()))
+			.andExpect(model().attribute("list", hasItem(hasProperty("id", is(1)))))
+			.andExpect(model().attribute("list", hasItem(hasProperty("id", is(2)))))
+			.andExpect(model().attribute("list", hasItem(hasProperty("id", is(3)))))
 			.andExpect(view().name("list"));
-
-//		verify(mockUserService, times(1)).getUserList(1, req);
 	}
+
+	/**
+	 * 詳細画面系テスト
+	 */
+
+
+
+	/**
+	 * 更新画面系テスト
+	 */
+
+
+
+	/**
+	 * 登録画面系テスト
+	 */
+
+
+
+
+	/**
+	 * 確認画面系テスト
+	 */
+
+
+
 }
