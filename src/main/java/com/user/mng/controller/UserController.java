@@ -42,7 +42,8 @@ public class UserController {
 	 * @return ユーザ一覧画面
 	 */
 	@RequestMapping(value = "/list/{page}", method = { RequestMethod.GET, RequestMethod.POST })
-	public String list(@PathVariable @Validated Integer page, UserListRequestEntity userListRequestEntity, Model model, BindingResult result) {
+	public String list(@PathVariable Integer page,
+			@Validated @ModelAttribute UserListRequestEntity userListRequestEntity, BindingResult result, Model model) {
 
 		if (result.hasErrors()) {
 			List<String> errorList = new ArrayList<String>();
@@ -51,6 +52,7 @@ public class UserController {
 			}
 			model.addAttribute("validationError", errorList);
 			model.addAttribute("searchItems", userListRequestEntity);
+			model.addAttribute("list", new ArrayList<>());
 
 			return "list";
 		}

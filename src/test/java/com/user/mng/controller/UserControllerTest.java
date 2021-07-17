@@ -23,6 +23,7 @@ import org.springframework.test.context.transaction.TransactionalTestExecutionLi
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.validation.Validator;
 import org.springframework.web.context.WebApplicationContext;
 
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
@@ -43,9 +44,11 @@ import com.user.mng.domain.service.UserService;
 @SpringBootTest
 class UserControllerTest {
 
-
 	@Autowired
 	WebApplicationContext wac;
+
+	@Autowired
+    Validator validator;
 
 	// TomcatサーバへデプロイすることなくHTTPリクエスト・レスポンスを扱うためのMockオブジェクト
 	@Autowired
@@ -90,7 +93,7 @@ class UserControllerTest {
 	@Transactional
 //	@WithUserDetails("user001")
 //	@WithMockUser(username = "username", roles = {"USER"})
-	void getListログイン済() throws Exception {
+	void ログイン済で一覧取得() throws Exception {
 
 		UserListResponseEntity list = new UserListResponseEntity();
 		UserListRequestEntity req = new UserListRequestEntity();
@@ -106,6 +109,21 @@ class UserControllerTest {
 			.andExpect(model().attribute("list", hasItem(hasProperty("id", is(1)))))
 			.andExpect(model().attribute("list", hasItem(hasProperty("id", is(2)))))
 			.andExpect(model().attribute("list", hasItem(hasProperty("id", is(3)))))
+			.andExpect(view().name("list"));
+	}
+
+	@Test
+	@DatabaseSetup("/data/")
+	@Transactional
+	void バリデーションエラー() throws Exception {
+
+		UserListRequestEntity req = new UserListRequestEntity();
+		req.setIdStart(1111111111);
+
+		this.mockmvc.perform(get("/user/list/1").flashAttr("userListRequestEntity", req).with(user("username").roles("USER")))
+			.andDo(print())
+			.andExpect(model().attributeHasErrors("userListRequestEntity"))
+			.andExpect(status().isOk())
 			.andExpect(view().name("list"));
 	}
 
