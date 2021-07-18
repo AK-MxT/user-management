@@ -275,16 +275,16 @@ class UserControllerTest {
 	@Transactional
 //	@WithUserDetails("user001")
 //	@WithMockUser(username = "username", roles = {"USER"})
-	void ログイン済で詳細取得_404() throws Exception {
+	void ログイン済で詳細取得_データなしでリダイレクト() throws Exception {
 
-		// TODO: 例外時の書き方調べる
-//		when(mockUserService.getUser(Long.valueOf("4"))).thenThrow(new DataNotFoundException())
+		String expectedException = "取得対象のユーザが存在しません。ID：4";
 
 		this.mockmvc.perform(get("/user/detail/4").with(user("username").roles("USER")))
 			.andDo(print())
 			.andExpect(model().hasNoErrors())
-			.andExpect(status().isOk())
-			.andExpect(view().name("list"));
+			.andExpect(status().is3xxRedirection())
+			.andExpect(flash().attribute("exception", expectedException))
+			.andExpect(redirectedUrl("/user/list/1"));
 	}
 
 	/************************************************
