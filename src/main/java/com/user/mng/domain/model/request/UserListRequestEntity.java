@@ -29,7 +29,7 @@ public class UserListRequestEntity {
 	private String firstName;
 
 	// 性別
-	@Pattern(regexp = "[0-1]")
+	@Pattern(regexp = "[0-1]", message = "性別の入力値に誤りがあります")
 	private String gender;
 
 	// 取得件数
