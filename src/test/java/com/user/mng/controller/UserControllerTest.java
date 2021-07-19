@@ -18,6 +18,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.security.test.context.support.WithAnonymousUser;
+import org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors;
 import org.springframework.test.context.TestExecutionListeners;
 import org.springframework.test.context.support.DependencyInjectionTestExecutionListener;
 import org.springframework.test.context.transaction.TransactionalTestExecutionListener;
@@ -35,6 +36,7 @@ import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import com.user.mng.config.CsvDataSetLoader;
 import com.user.mng.domain.model.entity.UserDetailEntity;
+import com.user.mng.domain.model.request.UserConfirmRequestEntity;
 import com.user.mng.domain.model.request.UserListRequestEntity;
 import com.user.mng.domain.model.response.UserDetailResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
@@ -143,7 +145,9 @@ class UserControllerTest {
 		req.setFirstName("aaaaaaaaaaa"); 	// 11文字（エラー）
 		req.setGender("2"); 				// 0: 男性・1: 女性（エラー）
 
-		MvcResult mvcResult = this.mockmvc.perform(get("/user/list/1").flashAttr("userListRequestEntity", req).with(user("username").roles("USER")))
+		MvcResult mvcResult = this.mockmvc.perform(get("/user/list/1")
+				.flashAttr("userListRequestEntity", req)
+				.with(user("username").roles("USER")))
 			.andDo(print())
 			.andExpect(model().attributeHasErrors("userListRequestEntity"))
 			// エラー件数の確認
@@ -291,6 +295,55 @@ class UserControllerTest {
 	 * 更新画面系テスト                             *
 	 ************************************************/
 
+	/**
+	 * 未ログインでアクセス
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@DatabaseSetup("/data/")
+	@Transactional
+	@WithAnonymousUser
+	void 未ログインで更新用データ取得_GET() throws Exception {
+
+		// 未ログインでのアクセスの場合、ログイン画面へリダイレクトされる
+		this.mockmvc.perform(get("/user/edit/1"))
+			.andDo(print())
+			.andExpect(status().is3xxRedirection());
+	}
+
+	/**
+	 * 未ログインでアクセス
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@DatabaseSetup("/data/")
+	@Transactional
+	@WithAnonymousUser
+	void 未ログインで更新用データ取得_POST() throws Exception {
+
+		UserConfirmRequestEntity req = new UserConfirmRequestEntity();
+		// 必須項目だけセット
+		req.setLastName("テスト");
+		req.setLastNameKana("テスト");
+		req.setFirstName("ユーザ01");
+		req.setFirstNameKana("ユーザゼロイチ");
+		req.setGender("1");
+		req.setBirthday("2001/10/03");
+		req.setPostalCode("1234567");
+		req.setPrefecture("東京都");
+		req.setAddress1("A市");
+		req.setAddress2("B町");
+
+		// 未ログインでのアクセスの場合、ログイン画面へリダイレクトされる
+		this.mockmvc.perform(post("/user/edit/1")
+				.flashAttr("userConfirmRequestEntity", req)
+				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
+				.with(SecurityMockMvcRequestPostProcessors.csrf()))
+			.andDo(print())
+			.andExpect(status().is3xxRedirection());
+	}
 
 
 	/************************************************
