@@ -35,10 +35,12 @@ import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
 import com.user.mng.config.CsvDataSetLoader;
+import com.user.mng.constant.UserConstant;
 import com.user.mng.domain.model.entity.UserDetailEntity;
 import com.user.mng.domain.model.request.UserConfirmRequestEntity;
 import com.user.mng.domain.model.request.UserListRequestEntity;
 import com.user.mng.domain.model.response.UserDetailResponseEntity;
+import com.user.mng.domain.model.response.UserEditResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
 import com.user.mng.domain.service.UserService;
 
@@ -345,12 +347,128 @@ class UserControllerTest {
 			.andExpect(status().is3xxRedirection());
 	}
 
+	/**
+	 * ログイン状態でアクセス（正常系・GET）
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@DatabaseSetup("/data/")
+	@Transactional
+	void ログイン済で更新用データ取得_GET() throws Exception {
+
+		UserEditResponseEntity result = new UserEditResponseEntity();
+		result.setId(1);
+		result.setLastName("テスト");
+		result.setFirstName("ユーザ01");
+		result.setLastNameKana("テスト");
+		result.setFirstNameKana("ユーザゼロイチ");
+		result.setGender("0");
+		result.setBirthday("1997/10/20");
+		result.setPostalCode("1234567");
+		result.setPrefecture("東京都");
+		result.setAddress1("A市");
+		result.setAddress2("B町");
+		result.setAddress3("1");
+		result.setPhoneNumber("0000000000");
+		result.setRemarks("test");
+		result.setInsertUser("system");
+		result.setInsertDate("2021/05/16 00:00:00");
+		result.setUpdateUser("system");
+		result.setUpdateDate("2021/06/29 21:58:50");
+		result.setDeleteFlg("未削除");
+
+		when(mockUserService.getUserForEdit(Long.valueOf("1"))).thenReturn(result);
+
+		this.mockmvc.perform(get("/user/edit/1").with(user("username").roles("USER")))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(model().attribute("title", UserConstant.TITLE_UPDATE))
+			.andExpect(model().attribute("userForEdit", result))
+			.andExpect(view().name("edit"));
+	}
+
+	/**
+	 * ログイン状態でアクセス（正常系・POST）
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@DatabaseSetup("/data/")
+	@Transactional
+	void ログイン済で更新用データ取得_POST() throws Exception {
+
+		UserConfirmRequestEntity req = new UserConfirmRequestEntity();
+		req.setId(1);
+		req.setLastName("テスト");
+		req.setFirstName("ユーザ01");
+		req.setLastNameKana("テスト");
+		req.setFirstNameKana("ユーザゼロイチ");
+		req.setGender("0");
+		req.setBirthday("1997/10/20");
+		req.setPostalCode("1234567");
+		req.setPrefecture("東京都");
+		req.setAddress1("A市");
+		req.setAddress2("B町");
+		req.setAddress3("1");
+		req.setPhoneNumber("0000000000");
+		req.setRemarks("test");
+		req.setInsertUser("system");
+		req.setUpdateUser("system");
+
+		this.mockmvc.perform(post("/user/edit/1")
+				.flashAttr("userConfirmRequestEntity", req)
+				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+				.with(user("username").roles("USER")))
+			.andDo(print())
+			.andExpect(model().hasNoErrors())
+			.andExpect(status().isOk())
+			.andExpect(model().attribute("title", UserConstant.TITLE_UPDATE))
+			.andExpect(model().attribute("userForEdit", req))
+			.andExpect(view().name("edit"));
+	}
+
+	/**
+	 * ログイン状態でアクセス（異常系：存在しないIDでアクセスし、一覧画面に戻る）
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@DatabaseSetup("/data/")
+	@Transactional
+//	@WithUserDetails("user001")
+//	@WithMockUser(username = "username", roles = {"USER"})
+	void ログイン済で更新用データ取得_データなしでリダイレクト_GET() throws Exception {
+
+		String expectedException = "取得対象のユーザが存在しません。ID：4";
+
+		this.mockmvc.perform(get("/user/edit/4").with(user("username").roles("USER")))
+			.andDo(print())
+			.andExpect(model().hasNoErrors())
+			.andExpect(status().is3xxRedirection())
+			.andExpect(flash().attribute("exception", expectedException))
+			.andExpect(redirectedUrl("/user/list/1"));
+	}
 
 	/************************************************
 	 * 登録画面系テスト                             *
 	 ************************************************/
 
+	/**
+	 * 未ログインでアクセス
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@WithAnonymousUser
+	void 未ログインで登録画面へ_GET() throws Exception {
 
+		// 未ログインでのアクセスの場合、ログイン画面へリダイレクトされる
+		this.mockmvc.perform(get("/user/new"))
+			.andDo(print())
+			.andExpect(status().is3xxRedirection());
+	}
 
 
 	/************************************************
