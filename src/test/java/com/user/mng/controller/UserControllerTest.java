@@ -38,6 +38,7 @@ import com.user.mng.config.CsvDataSetLoader;
 import com.user.mng.constant.UserConstant;
 import com.user.mng.domain.model.entity.UserDetailEntity;
 import com.user.mng.domain.model.request.UserConfirmRequestEntity;
+import com.user.mng.domain.model.request.UserEditRequestEntity;
 import com.user.mng.domain.model.request.UserListRequestEntity;
 import com.user.mng.domain.model.response.UserDetailResponseEntity;
 import com.user.mng.domain.model.response.UserEditResponseEntity;
@@ -298,7 +299,7 @@ class UserControllerTest {
 	 ************************************************/
 
 	/**
-	 * 未ログインでアクセス
+	 * 未ログインでアクセス(GET)
 	 *
 	 * @throws Exception
 	 */
@@ -315,7 +316,7 @@ class UserControllerTest {
 	}
 
 	/**
-	 * 未ログインでアクセス
+	 * 未ログインでアクセス(POST)
 	 *
 	 * @throws Exception
 	 */
@@ -456,7 +457,7 @@ class UserControllerTest {
 	 ************************************************/
 
 	/**
-	 * 未ログインでアクセス
+	 * 未ログインでアクセス(GET)
 	 *
 	 * @throws Exception
 	 */
@@ -468,6 +469,100 @@ class UserControllerTest {
 		this.mockmvc.perform(get("/user/new"))
 			.andDo(print())
 			.andExpect(status().is3xxRedirection());
+	}
+
+	/**
+	 * 未ログインでアクセス(POST)
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@WithAnonymousUser
+	void 未ログインで登録画面へ_POST() throws Exception {
+
+		UserConfirmRequestEntity req = new UserConfirmRequestEntity();
+		req.setId(1);
+		req.setLastName("テスト");
+		req.setFirstName("ユーザ01");
+		req.setLastNameKana("テスト");
+		req.setFirstNameKana("ユーザゼロイチ");
+		req.setGender("0");
+		req.setBirthday("1997/10/20");
+		req.setPostalCode("1234567");
+		req.setPrefecture("東京都");
+		req.setAddress1("A市");
+		req.setAddress2("B町");
+		req.setAddress3("1");
+		req.setPhoneNumber("0000000000");
+		req.setRemarks("test");
+		req.setInsertUser("system");
+		req.setUpdateUser("system");
+
+		// 未ログインでのアクセスの場合、ログイン画面へリダイレクトされる
+		this.mockmvc.perform(post("/user/new")
+				.flashAttr("userConfirmRequestEntity", req)
+				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
+				.with(SecurityMockMvcRequestPostProcessors.csrf()))
+			.andDo(print())
+			.andExpect(status().is3xxRedirection());
+	}
+
+	/**
+	 * ログイン状態でアクセス（正常系・GET）
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	void ログイン済で登録画面へ_GET() throws Exception {
+
+		UserEditRequestEntity blank = new UserEditRequestEntity();
+
+		this.mockmvc.perform(get("/user/new").with(user("username").roles("USER")))
+			.andDo(print())
+			.andExpect(model().hasNoErrors())
+			.andExpect(status().isOk())
+			.andExpect(model().attribute("title", UserConstant.TITLE_REGISTER))
+			.andExpect(model().attribute("userForEdit", blank))
+			.andExpect(view().name("edit"));
+	}
+
+	/**
+	 * ログイン状態でアクセス（正常系・POST）
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	void ログイン済で登録画面へ_POST() throws Exception {
+
+		UserConfirmRequestEntity req = new UserConfirmRequestEntity();
+		req.setId(1);
+		req.setLastName("テスト");
+		req.setFirstName("ユーザ01");
+		req.setLastNameKana("テスト");
+		req.setFirstNameKana("ユーザゼロイチ");
+		req.setGender("0");
+		req.setBirthday("1997/10/20");
+		req.setPostalCode("1234567");
+		req.setPrefecture("東京都");
+		req.setAddress1("A市");
+		req.setAddress2("B町");
+		req.setAddress3("1");
+		req.setPhoneNumber("0000000000");
+		req.setRemarks("test");
+		req.setInsertUser("system");
+		req.setUpdateUser("system");
+
+		this.mockmvc.perform(post("/user/new")
+				.flashAttr("userConfirmRequestEntity", req)
+				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+				.with(user("username").roles("USER")))
+			.andDo(print())
+			.andExpect(model().hasNoErrors())
+			.andExpect(status().isOk())
+			.andExpect(model().attribute("title", UserConstant.TITLE_REGISTER))
+			.andExpect(model().attribute("userForEdit", req))
+			.andExpect(view().name("edit"));
 	}
 
 
