@@ -139,7 +139,7 @@ class UserControllerTest {
 	 */
 	@Test
 	@Transactional
-	void バリデーションエラー() throws Exception {
+	void バリデーションエラー_一覧取得() throws Exception {
 
 		UserListRequestEntity req = new UserListRequestEntity();
 		req.setIdStart(1111111111);			// 10桁（エラー）
@@ -569,6 +569,230 @@ class UserControllerTest {
 	/************************************************
 	 * 確認画面系テスト                             *
 	 ************************************************/
+
+	/**
+	 * 未ログインでアクセス(POST)
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@WithAnonymousUser
+	void 未ログインで確認画面へ_POST() throws Exception {
+
+		UserConfirmRequestEntity req = new UserConfirmRequestEntity();
+		req.setId(1);
+		req.setLastName("テスト");
+		req.setFirstName("ユーザ01");
+		req.setLastNameKana("テスト");
+		req.setFirstNameKana("ユーザゼロイチ");
+		req.setGender("0");
+		req.setBirthday("1997/10/20");
+		req.setPostalCode("1234567");
+		req.setPrefecture("東京都");
+		req.setAddress1("A市");
+		req.setAddress2("B町");
+		req.setAddress3("1");
+		req.setPhoneNumber("0000000000");
+		req.setRemarks("test");
+		req.setInsertUser("system");
+		req.setUpdateUser("system");
+
+		// 未ログインでのアクセスの場合、ログイン画面へリダイレクトされる
+		this.mockmvc.perform(post("/user/confirm")
+				.flashAttr("userConfirmRequestEntity", req)
+				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
+				.with(SecurityMockMvcRequestPostProcessors.csrf()))
+			.andDo(print())
+			.andExpect(status().is3xxRedirection());
+	}
+
+	/**
+	 * ログイン済でアクセス(POST・登録時)
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@WithAnonymousUser
+	void ログイン済で確認画面へ_POST_登録時() throws Exception {
+
+		UserConfirmRequestEntity req = new UserConfirmRequestEntity();
+		// 登録時はIDはNULL
+		req.setLastName("テスト");
+		req.setFirstName("ユーザ01");
+		req.setLastNameKana("テスト");
+		req.setFirstNameKana("ユーザゼロイチ");
+		req.setGender("0");
+		req.setBirthday("1997/10/20");
+		req.setPostalCode("1234567");
+		req.setPrefecture("東京都");
+		req.setAddress1("A市");
+		req.setAddress2("B町");
+		req.setAddress3("1");
+		req.setPhoneNumber("0000000000");
+		req.setRemarks("test");
+		req.setInsertUser("system");
+		req.setUpdateUser("system");
+
+		// 未ログインでのアクセスの場合、ログイン画面へリダイレクトされる
+		this.mockmvc.perform(post("/user/confirm")
+				.flashAttr("userConfirmRequestEntity", req)
+				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+				.with(user("username").roles("USER")))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(model().attribute("title", UserConstant.TITLE_REGISTER))
+			.andExpect(model().attribute("userForEdit", req))
+			.andExpect(view().name("confirm"));
+	}
+
+	/**
+	 * ログイン済でアクセス(POST・更新時)
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@WithAnonymousUser
+	void ログイン済で確認画面へ_POST_更新時() throws Exception {
+
+		UserConfirmRequestEntity req = new UserConfirmRequestEntity();
+		// 登録時はIDはNULL
+		req.setId(1);
+		req.setLastName("テスト");
+		req.setFirstName("ユーザ01");
+		req.setLastNameKana("テスト");
+		req.setFirstNameKana("ユーザゼロイチ");
+		req.setGender("0");
+		req.setBirthday("1997/10/20");
+		req.setPostalCode("1234567");
+		req.setPrefecture("東京都");
+		req.setAddress1("A市");
+		req.setAddress2("B町");
+		req.setAddress3("1");
+		req.setPhoneNumber("0000000000");
+		req.setRemarks("test");
+		req.setInsertUser("system");
+		req.setUpdateUser("system");
+
+		// 未ログインでのアクセスの場合、ログイン画面へリダイレクトされる
+		this.mockmvc.perform(post("/user/confirm")
+				.flashAttr("userConfirmRequestEntity", req)
+				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+				.with(user("username").roles("USER")))
+			.andDo(print())
+			.andExpect(status().isOk())
+			.andExpect(model().attribute("title", UserConstant.TITLE_UPDATE))
+			.andExpect(model().attribute("userForEdit", req))
+			.andExpect(view().name("confirm"));
+	}
+
+	/**
+	 * バリデーションチェック（異常系・必須チェック）
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@Transactional
+	void バリデーションエラー_必須_確認画面() throws Exception {
+
+		UserConfirmRequestEntity req = new UserConfirmRequestEntity();
+
+		MvcResult mvcResult = this.mockmvc.perform(post("/user/confirm")
+				.flashAttr("userConfirmRequestEntity", req)
+				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+				.with(user("username").roles("USER")))
+			.andDo(print())
+			.andExpect(model().attributeHasErrors("userConfirmRequestEntity"))
+			// エラー件数の確認
+			.andExpect(model().errorCount(10))
+			.andExpect(status().isOk())
+			.andExpect(view().name("edit"))
+			// ↓を付けるとMvcResultのオブジェクトを取得できる
+			.andReturn();
+
+		// バリデーションエラーメッセージの取得
+		ModelAndView mav = mvcResult.getModelAndView();
+
+		BindingResult result = (BindingResult) mav.getModel()
+				.get("org.springframework.validation.BindingResult.userConfirmRequestEntity");
+
+		// バリデーションエラーメッセージの確認
+		String actErr_lastNameKana = result.getFieldError("lastNameKana").getDefaultMessage();
+		String actErr_firstNameKana = result.getFieldError("firstNameKana").getDefaultMessage();
+		String actErr_lastName = result.getFieldError("lastName").getDefaultMessage();
+		String actErr_firstName = result.getFieldError("firstName").getDefaultMessage();
+		String actErr_gender = result.getFieldError("gender").getDefaultMessage();
+		String actErr_birthday = result.getFieldError("birthday").getDefaultMessage();
+		String actErr_postalCode = result.getFieldError("postalCode").getDefaultMessage();
+		String actErr_prefecture = result.getFieldError("prefecture").getDefaultMessage();
+		String actErr_address1 = result.getFieldError("address1").getDefaultMessage();
+		String actErr_address2 = result.getFieldError("address2").getDefaultMessage();
+
+		String expectErr_lastNameKana = "姓カナは必須項目です";
+		String expectErr_firstNameKana = "名カナは必須項目です";
+		String expectErr_lastName = "姓は必須項目です";
+		String expectErr_firstName = "名は必須項目です";
+		String expectErr_gender = "性別は必須項目です";
+		String expectErr_birthday = "誕生日は必須項目です";
+		String expectErr_postalCode = "郵便番号は必須項目です";
+		String expectErr_prefecture = "都道府県は必須項目です";
+		String expectErr_address1 = "市区町村は必須項目です";
+		String expectErr_address2 = "町名は必須項目です";
+
+		// メッセージ照合処理
+		assertThat(expectErr_lastNameKana, is(actErr_lastNameKana));
+		assertThat(expectErr_firstNameKana, is(actErr_firstNameKana));
+		assertThat(expectErr_lastName, is(actErr_lastName));
+		assertThat(expectErr_firstName, is(actErr_firstName));
+		assertThat(expectErr_gender, is(actErr_gender));
+		assertThat(expectErr_birthday, is(actErr_birthday));
+		assertThat(expectErr_postalCode, is(actErr_postalCode));
+		assertThat(expectErr_prefecture, is(actErr_prefecture));
+		assertThat(expectErr_address1, is(actErr_address1));
+		assertThat(expectErr_address2, is(actErr_address2));
+	}
+
+	/**
+	 * バリデーションチェック（異常系・文字数チェック）
+	 *
+	 * @throws Exception
+	 */
+
+
+	/**
+	 * バリデーションチェック（異常系・その他チェック）
+	 *
+	 * @throws Exception
+	 */
+
+
+	/************************************************
+	 * 登録処理テスト                               *
+	 ************************************************/
+
+
+
+
+
+
+	/************************************************
+	 * 更新処理テスト                               *
+	 ************************************************/
+
+
+
+
+
+
+	/************************************************
+	 * 削除処理テスト                               *
+	 ************************************************/
+
+
+
+
 
 
 
