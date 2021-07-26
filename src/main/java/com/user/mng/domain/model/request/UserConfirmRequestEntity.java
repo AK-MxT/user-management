@@ -39,7 +39,7 @@ public class UserConfirmRequestEntity {
 
 	// 性別
 	@NotEmpty(message = "性別は必須項目です")
-	@Pattern(regexp = "[0-1]")
+	@Pattern(regexp = "[0-1]", message = "性別の入力値に誤りがあります")
 	private String gender;
 
 	// 誕生日

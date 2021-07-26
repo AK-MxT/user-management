@@ -633,7 +633,6 @@ class UserControllerTest {
 		req.setInsertUser("system");
 		req.setUpdateUser("system");
 
-		// 未ログインでのアクセスの場合、ログイン画面へリダイレクトされる
 		this.mockmvc.perform(post("/user/confirm")
 				.flashAttr("userConfirmRequestEntity", req)
 				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
@@ -674,7 +673,6 @@ class UserControllerTest {
 		req.setInsertUser("system");
 		req.setUpdateUser("system");
 
-		// 未ログインでのアクセスの場合、ログイン画面へリダイレクトされる
 		this.mockmvc.perform(post("/user/confirm")
 				.flashAttr("userConfirmRequestEntity", req)
 				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
@@ -926,8 +924,59 @@ class UserControllerTest {
 	 * 登録処理テスト                               *
 	 ************************************************/
 
+	/**
+	 * 未ログインでアクセス(POST)
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@WithAnonymousUser
+	void 未ログインで登録処理() throws Exception {
 
+		// 未ログインでのアクセスの場合、ログイン画面へリダイレクトされる
+		this.mockmvc.perform(post("/user/insert")
+				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
+				.with(SecurityMockMvcRequestPostProcessors.csrf()))
+			.andDo(print())
+			.andExpect(status().is3xxRedirection());
+	}
 
+	/**
+	 * ログイン済でアクセス(POST)
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@Transactional
+	void ログイン済で登録処理() throws Exception {
+
+		UserEditRequestEntity req = new UserEditRequestEntity();
+		req.setLastName("テスト");
+		req.setFirstName("ユーザ01");
+		req.setLastNameKana("テスト");
+		req.setFirstNameKana("ユーザゼロイチ");
+		req.setGender("0");
+		req.setBirthday("1997/10/20");
+		req.setPostalCode("1234567");
+		req.setPrefecture("東京都");
+		req.setAddress1("A市");
+		req.setAddress2("B町");
+		req.setAddress3("1");
+		req.setPhoneNumber("0000000000");
+		req.setRemarks("test");
+		req.setInsertUser("system");
+		req.setUpdateUser("system");
+
+		this.mockmvc.perform(post("/user/insert")
+				.flashAttr("userEditRequestEntity", req)
+				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+				.with(user("username").roles("USER")))
+			.andDo(print())
+			.andExpect(status().is3xxRedirection())
+			.andExpect(flash().attribute("information", UserConstant.REGISTER_SUCCESS))
+			.andExpect(redirectedUrl("/user/list/1"));
+	}
 
 
 
