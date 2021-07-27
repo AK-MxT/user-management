@@ -978,7 +978,243 @@ class UserControllerTest {
 			.andExpect(redirectedUrl("/user/list/1"));
 	}
 
+	/**
+	 * バリデーションチェック（異常系・必須チェック）
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@Transactional
+	void バリデーションエラー_必須_登録処理() throws Exception {
 
+		// すべての項目をnullでリクエスト
+		UserEditRequestEntity req = new UserEditRequestEntity();
+
+		MvcResult mvcResult = this.mockmvc.perform(post("/user/insert")
+				.flashAttr("userEditRequestEntity", req)
+				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+				.with(user("username").roles("USER")))
+			.andDo(print())
+			.andExpect(model().attributeHasErrors("userEditRequestEntity"))
+			// エラー件数の確認
+			.andExpect(model().errorCount(10))
+			.andExpect(status().isOk())
+			.andExpect(model().attribute("title", UserConstant.TITLE_REGISTER))
+			.andExpect(view().name("edit"))
+			// ↓を付けるとMvcResultのオブジェクトを取得できる
+			.andReturn();
+
+		// バリデーションエラーメッセージの取得
+		ModelAndView mav = mvcResult.getModelAndView();
+
+		BindingResult result = (BindingResult) mav.getModel()
+				.get("org.springframework.validation.BindingResult.userEditRequestEntity");
+
+		// バリデーションエラーメッセージの確認
+		String actErr_lastNameKana = result.getFieldError("lastNameKana").getDefaultMessage();
+		String actErr_firstNameKana = result.getFieldError("firstNameKana").getDefaultMessage();
+		String actErr_lastName = result.getFieldError("lastName").getDefaultMessage();
+		String actErr_firstName = result.getFieldError("firstName").getDefaultMessage();
+		String actErr_gender = result.getFieldError("gender").getDefaultMessage();
+		String actErr_birthday = result.getFieldError("birthday").getDefaultMessage();
+		String actErr_postalCode = result.getFieldError("postalCode").getDefaultMessage();
+		String actErr_prefecture = result.getFieldError("prefecture").getDefaultMessage();
+		String actErr_address1 = result.getFieldError("address1").getDefaultMessage();
+		String actErr_address2 = result.getFieldError("address2").getDefaultMessage();
+
+		String expectErr_lastNameKana = "姓カナは必須項目です";
+		String expectErr_firstNameKana = "名カナは必須項目です";
+		String expectErr_lastName = "姓は必須項目です";
+		String expectErr_firstName = "名は必須項目です";
+		String expectErr_gender = "性別は必須項目です";
+		String expectErr_birthday = "誕生日は必須項目です";
+		String expectErr_postalCode = "郵便番号は必須項目です";
+		String expectErr_prefecture = "都道府県は必須項目です";
+		String expectErr_address1 = "市区町村は必須項目です";
+		String expectErr_address2 = "町名は必須項目です";
+
+		// メッセージ照合処理
+		assertThat(expectErr_lastNameKana, is(actErr_lastNameKana));
+		assertThat(expectErr_firstNameKana, is(actErr_firstNameKana));
+		assertThat(expectErr_lastName, is(actErr_lastName));
+		assertThat(expectErr_firstName, is(actErr_firstName));
+		assertThat(expectErr_gender, is(actErr_gender));
+		assertThat(expectErr_birthday, is(actErr_birthday));
+		assertThat(expectErr_postalCode, is(actErr_postalCode));
+		assertThat(expectErr_prefecture, is(actErr_prefecture));
+		assertThat(expectErr_address1, is(actErr_address1));
+		assertThat(expectErr_address2, is(actErr_address2));
+	}
+
+	/**
+	 * バリデーションチェック（異常系・文字数チェック）
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@Transactional
+	void バリデーションエラー_文字数_登録処理() throws Exception {
+
+		UserEditRequestEntity req = new UserEditRequestEntity();
+
+		// 必須チェックされる項目は正しく入力する
+		req.setGender("0");
+		req.setBirthday("2020/11/11");
+		req.setPostalCode("1234567");
+		req.setPrefecture("東京都");
+
+		req.setLastName("aaaaaaaaaaa");											// 11文字（エラー）
+		req.setFirstName("aaaaaaaaaaa");										// 11文字（エラー）
+		req.setLastNameKana("アアアアアアアアアアアアアアアアアアアアア");		// 21文字（エラー）
+		req.setFirstNameKana("アアアアアアアアアアアアアアアアアアアアア");		// 21文字（エラー）
+		req.setAddress1("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");						// 31文字（エラー）
+		req.setAddress2("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");						// 31文字（エラー）
+		req.setAddress3("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");						// 31文字（エラー）
+		req.setAddress4("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");						// 31文字（エラー）
+		req.setPhoneNumber("000000000000");										// 12文字（エラー）
+		req.setRemarks("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+				+ "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+				+ "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+				+ "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");	// 401文字（エラー）
+		req.setInsertUser("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");	// 46文字（エラー）
+		req.setUpdateUser("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa");	// 46文字（エラー）
+
+		MvcResult mvcResult = this.mockmvc.perform(post("/user/insert")
+				.flashAttr("userEditRequestEntity", req)
+				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+				.with(user("username").roles("USER")))
+			.andDo(print())
+			.andExpect(model().attributeHasErrors("userEditRequestEntity"))
+			// エラー件数の確認
+			.andExpect(model().errorCount(12))
+			.andExpect(status().isOk())
+			.andExpect(model().attribute("title", UserConstant.TITLE_REGISTER))
+			.andExpect(view().name("edit"))
+			// ↓を付けるとMvcResultのオブジェクトを取得できる
+			.andReturn();
+
+		// バリデーションエラーメッセージの取得
+		ModelAndView mav = mvcResult.getModelAndView();
+
+		BindingResult result = (BindingResult) mav.getModel()
+				.get("org.springframework.validation.BindingResult.userEditRequestEntity");
+
+		// バリデーションエラーメッセージの確認
+		String actErr_lastName = result.getFieldError("lastName").getDefaultMessage();
+		String actErr_firstName = result.getFieldError("firstName").getDefaultMessage();
+		String actErr_lastNameKana = result.getFieldError("lastNameKana").getDefaultMessage();
+		String actErr_firstNameKana = result.getFieldError("firstNameKana").getDefaultMessage();
+		String actErr_address1 = result.getFieldError("address1").getDefaultMessage();
+		String actErr_address2 = result.getFieldError("address2").getDefaultMessage();
+		String actErr_address3 = result.getFieldError("address3").getDefaultMessage();
+		String actErr_address4 = result.getFieldError("address4").getDefaultMessage();
+		String actErr_phoneNumber = result.getFieldError("phoneNumber").getDefaultMessage();
+		String actErr_remarks = result.getFieldError("remarks").getDefaultMessage();
+		String actErr_insertUser = result.getFieldError("insertUser").getDefaultMessage();
+		String actErr_updateUser = result.getFieldError("updateUser").getDefaultMessage();
+
+		String expectErr_lastName = "姓は10文字以内で入力してください";
+		String expectErr_firstName = "名は10文字以内で入力してください";
+		String expectErr_lastNameKana = "姓カナは20文字以内で入力してください";
+		String expectErr_firstNameKana = "名カナは20文字以内で入力してください";
+		String expectErr_address1 = "市区町村は30文字以内で入力してください";
+		String expectErr_address2 = "町名は30文字以内で入力してください";
+		String expectErr_address3 = "番地は30文字以内で入力してください";
+		String expectErr_address4 = "建物名・部屋番号は30文字以内で入力してください";
+		String expectErr_phoneNumber = "電話番号は11文字以内で入力してください";
+		String expectErr_remarks = "備考は400文字以内で入力してください";
+		String expectErr_insertUser = "登録者は45文字以内で入力してください";
+		String expectErr_updateUser = "更新者は45文字以内で入力してください";
+
+		// メッセージ照合処理
+		assertThat(expectErr_lastNameKana, is(actErr_lastNameKana));
+		assertThat(expectErr_firstNameKana, is(actErr_firstNameKana));
+		assertThat(expectErr_lastName, is(actErr_lastName));
+		assertThat(expectErr_firstName, is(actErr_firstName));
+		assertThat(expectErr_address1, is(actErr_address1));
+		assertThat(expectErr_address2, is(actErr_address2));
+		assertThat(expectErr_address3, is(actErr_address3));
+		assertThat(expectErr_address4, is(actErr_address4));
+		assertThat(expectErr_phoneNumber, is(actErr_phoneNumber));
+		assertThat(expectErr_remarks, is(actErr_remarks));
+		assertThat(expectErr_insertUser, is(actErr_insertUser));
+		assertThat(expectErr_updateUser, is(actErr_updateUser));
+	}
+
+	/**
+	 * バリデーションチェック（異常系・その他チェック）
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@Transactional
+	void バリデーションエラー_その他_登録処理() throws Exception {
+
+		UserEditRequestEntity req = new UserEditRequestEntity();
+
+		// チェック外の項目は正しく入力する
+		req.setLastName("テスト");
+		req.setFirstName("ユーザ");
+		req.setPrefecture("東京都");
+		req.setAddress1("A市");
+		req.setAddress2("B町");
+		req.setRemarks("test");
+		req.setInsertUser("system");
+		req.setUpdateUser("system");
+
+		req.setLastNameKana("てすと");		// ひらがな（エラー）
+		req.setFirstNameKana("登録");		// 漢字（エラー）
+		req.setGender("2");					// 0: 男性・1: 女性（エラー）
+		req.setBirthday("2020/33/33");		// 日付以外（エラー）
+		req.setPostalCode("123456");		// 7桁でない（エラー）
+		req.setPhoneNumber("aaaaaaaaaa");	// 数値でない（エラー）
+
+		MvcResult mvcResult = this.mockmvc.perform(post("/user/insert")
+				.flashAttr("userEditRequestEntity", req)
+				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+				.with(user("username").roles("USER")))
+			.andDo(print())
+			.andExpect(model().attributeHasErrors("userEditRequestEntity"))
+			// エラー件数の確認
+			.andExpect(model().errorCount(6))
+			.andExpect(status().isOk())
+			.andExpect(model().attribute("title", UserConstant.TITLE_REGISTER))
+			.andExpect(view().name("edit"))
+			// ↓を付けるとMvcResultのオブジェクトを取得できる
+			.andReturn();
+
+		// バリデーションエラーメッセージの取得
+		ModelAndView mav = mvcResult.getModelAndView();
+
+		BindingResult result = (BindingResult) mav.getModel()
+				.get("org.springframework.validation.BindingResult.userEditRequestEntity");
+
+		// バリデーションエラーメッセージの確認
+		String actErr_lastNameKana = result.getFieldError("lastNameKana").getDefaultMessage();
+		String actErr_firstNameKana = result.getFieldError("firstNameKana").getDefaultMessage();
+		String actErr_gender = result.getFieldError("gender").getDefaultMessage();
+		String actErr_birthday = result.getFieldError("birthday").getDefaultMessage();
+		String actErr_postalCode = result.getFieldError("postalCode").getDefaultMessage();
+		String actErr_phoneNumber = result.getFieldError("phoneNumber").getDefaultMessage();
+
+		String expectErr_lastNameKana = "姓カナは全角カタカナで入力してください";
+		String expectErr_firstNameKana = "名カナは全角カタカナで入力してください";
+		String expectErr_gender = "性別の入力値に誤りがあります";
+		String expectErr_birthday = "誕生日の入力値に誤りがあります";
+		String expectErr_postalCode = "郵便番号の入力値に誤りがあります";
+		String expectErr_phoneNumber = "電話番号の入力値に誤りがあります";
+
+		// メッセージ照合処理
+		assertThat(expectErr_lastNameKana, is(actErr_lastNameKana));
+		assertThat(expectErr_firstNameKana, is(actErr_firstNameKana));
+		assertThat(expectErr_gender, is(actErr_gender));
+		assertThat(expectErr_birthday, is(actErr_birthday));
+		assertThat(expectErr_postalCode, is(actErr_postalCode));
+		assertThat(expectErr_phoneNumber, is(actErr_phoneNumber));
+	}
 
 	/************************************************
 	 * 更新処理テスト                               *

@@ -18,11 +18,13 @@ public class UserEditRequestEntity {
 	// 姓カナ
 	@NotEmpty(message = "姓カナは必須項目です")
 	@Size(max = 20, message = "姓カナは20文字以内で入力してください")
+	@Pattern(regexp = "^[ァ-タダ-ヶー]*$", message = "姓カナは全角カタカナで入力してください")
 	private String lastNameKana;
 
 	// 名カナ
 	@NotEmpty(message = "名カナは必須項目です")
 	@Size(max = 20, message = "名カナは20文字以内で入力してください")
+	@Pattern(regexp = "^[ァ-タダ-ヶー]*$", message = "名カナは全角カタカナで入力してください")
 	private String firstNameKana;
 
 	// 姓
@@ -37,7 +39,7 @@ public class UserEditRequestEntity {
 
 	// 性別
 	@NotEmpty(message = "性別は必須項目です")
-	@Pattern(regexp = "[0-1]")
+	@Pattern(regexp = "[0-1]", message = "性別の入力値に誤りがあります")
 	private String gender;
 
 	// 誕生日
@@ -73,7 +75,6 @@ public class UserEditRequestEntity {
 	private String address4;
 
 	// 電話番号
-	@NotEmpty(message = "電話番号は必須項目です")
 	@Size(max = 11, message = "電話番号は11文字以内で入力してください")
 	@Pattern(regexp = "[0-9]+", message = "電話番号の入力値に誤りがあります")
 	private String phoneNumber;
