@@ -34,6 +34,8 @@ import org.springframework.web.servlet.ModelAndView;
 import com.github.springtestdbunit.DbUnitTestExecutionListener;
 import com.github.springtestdbunit.annotation.DatabaseSetup;
 import com.github.springtestdbunit.annotation.DbUnitConfiguration;
+import com.github.springtestdbunit.annotation.ExpectedDatabase;
+import com.github.springtestdbunit.assertion.DatabaseAssertionMode;
 import com.user.mng.config.CsvDataSetLoader;
 import com.user.mng.constant.UserConstant;
 import com.user.mng.domain.model.entity.UserDetailEntity;
@@ -947,21 +949,23 @@ class UserControllerTest {
 	 * @throws Exception
 	 */
 	@Test
+	@DatabaseSetup("/data/")
+	@ExpectedDatabase(value = "/expect/insert/", assertionMode=DatabaseAssertionMode.NON_STRICT)
 	@Transactional
 	void ログイン済で登録処理() throws Exception {
 
 		UserEditRequestEntity req = new UserEditRequestEntity();
 		req.setLastName("テスト");
-		req.setFirstName("ユーザ01");
+		req.setFirstName("ユーザ04");
 		req.setLastNameKana("テスト");
-		req.setFirstNameKana("ユーザゼロイチ");
+		req.setFirstNameKana("ユーザゼロヨン");
 		req.setGender("0");
-		req.setBirthday("1997/10/20");
+		req.setBirthday("1944/04/04");
 		req.setPostalCode("1234567");
 		req.setPrefecture("東京都");
 		req.setAddress1("A市");
 		req.setAddress2("B町");
-		req.setAddress3("1");
+		req.setAddress3("4");
 		req.setPhoneNumber("0000000000");
 		req.setRemarks("test");
 		req.setInsertUser("system");
