@@ -1224,19 +1224,101 @@ class UserControllerTest {
 	 * 更新処理テスト                               *
 	 ************************************************/
 
+	/**
+	 * 未ログインでアクセス(POST)
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@WithAnonymousUser
+	void 未ログインで更新処理() throws Exception {
 
+		// 未ログインでのアクセスの場合、ログイン画面へリダイレクトされる
+		this.mockmvc.perform(post("/user/update")
+				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
+				.with(SecurityMockMvcRequestPostProcessors.csrf()))
+			.andDo(print())
+			.andExpect(status().is3xxRedirection());
+	}
 
+	/**
+	 * ログイン済でアクセス(POST)
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@DatabaseSetup("/data/")
+	@ExpectedDatabase(value = "/expect/update/", assertionMode=DatabaseAssertionMode.NON_STRICT)
+	@Transactional
+	void ログイン済で更新処理() throws Exception {
 
+		UserEditRequestEntity req = new UserEditRequestEntity();
+		req.setId(3);
+		req.setLastName("更新");
+		req.setFirstName("更新03");
+		req.setLastNameKana("コウシン");
+		req.setFirstNameKana("コウシンゼロサン");
+		req.setGender("1");
+		req.setBirthday("2000/01/01");
+		req.setPostalCode("9876543");
+		req.setPrefecture("北海道");
+		req.setAddress1("X市");
+		req.setAddress2("Y町");
+		req.setAddress3("Z");
+		req.setPhoneNumber("9999999999");
+		req.setRemarks("update");
+		req.setUpdateUser("update-test");
 
+		this.mockmvc.perform(post("/user/update")
+				.flashAttr("userEditRequestEntity", req)
+				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+				.with(user("username").roles("USER")))
+			.andDo(print())
+			.andExpect(status().is3xxRedirection())
+			.andExpect(flash().attribute("information", UserConstant.UPDATE_SUCCESS))
+			.andExpect(redirectedUrl("/user/list/1"));
+	}
 
 	/************************************************
 	 * 削除処理テスト                               *
 	 ************************************************/
 
+	/**
+	 * 未ログインでアクセス(POST)
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@WithAnonymousUser
+	void 未ログインで削除処理() throws Exception {
 
+		// 未ログインでのアクセスの場合、ログイン画面へリダイレクトされる
+		this.mockmvc.perform(post("/user/delete/3")
+				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
+				.with(SecurityMockMvcRequestPostProcessors.csrf()))
+			.andDo(print())
+			.andExpect(status().is3xxRedirection());
+	}
 
+	/**
+	 * ログイン済でアクセス(POST)
+	 *
+	 * @throws Exception
+	 */
+	@Test
+	@DatabaseSetup("/data/")
+	@ExpectedDatabase(value = "/expect/delete/", assertionMode=DatabaseAssertionMode.NON_STRICT)
+	@Transactional
+	void ログイン済で削除処理() throws Exception {
 
-
-
-
+		this.mockmvc.perform(post("/user/delete/3")
+				// POSTの場合、以下によりCSRFトークンを発行しないと403(FORBIDDEN)となる
+				.with(SecurityMockMvcRequestPostProcessors.csrf())
+				.with(user("username").roles("USER")))
+			.andDo(print())
+			.andExpect(status().is3xxRedirection())
+			.andExpect(flash().attribute("information", UserConstant.DELETE_SUCCESS))
+			.andExpect(redirectedUrl("/user/list/1"));
+	}
 }

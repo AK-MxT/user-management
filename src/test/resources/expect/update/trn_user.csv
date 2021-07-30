@@ -1,0 +1,4 @@
+last_name,first_name,last_name_kana,first_name_kana,gender,birthday,postal_code,prefecture,address1,address2,address3,phone_number,remarks,insert_user,update_user,delete_flg
+"テスト","ユーザ01","テスト","ユーザゼロイチ","0","1997-10-20","1234567","東京都","A市","B町","1","0000000000","test","system","system",0
+"テスト","ユーザ02","テスト","ユーザゼロニ","1","1979-11-12","1234567","東京都","A市","B町","2","0000000000","test","system","system",0
+"更新","更新03","コウシン","コウシンゼロサン","1","2000-01-01","9876543","北海道","X市","Y町","Z","9999999999","update","system","update-test",0
