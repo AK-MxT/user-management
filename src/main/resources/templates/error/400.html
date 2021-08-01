@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+<meta charset="UTF-8">
+<link rel="stylesheet"
+	th:href="@{/webjars/bootstrap/4.4.1-1/css/bootstrap.min.css}" />
+<script th:src="@{/webjars/jquery/3.5.0/jquery.min.js}"></script>
+<script th:src="@{/webjars/bootstrap/4.4.1-1/js/bootstrap.min.js}"></script>
+<title>400 Bad Request</title>
+</head>
+<body>
+	<div class="container d-flex align-items-center justify-content-center" style="height: 100vh;">
+		<div class="row justify-content-center">
+			<div class="col">
+				<div class="card">
+					<div class="card-body text-center">
+						<h1>400 Bad Request</h1>
+						<h3>不正なリクエストです。</h3>
+						<a class="btn btn-secondary btn-md mt-4" href="/user/list/1">ユーザ一覧へ</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</body>
+</html>
