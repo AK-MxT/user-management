@@ -5,6 +5,11 @@ plugins {
 	id 'war'
 }
 
+war {
+	enabled = true
+	archiveFileName = 'test.war'
+}
+
 group = 'com.user.mng'
 version = '0.0.1-SNAPSHOT'
 sourceCompatibility = '1.8'

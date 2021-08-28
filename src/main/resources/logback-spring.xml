@@ -17,7 +17,7 @@
 <!--     </springProfile> -->
 
     <!-- production環境用設定 -->
-    <springProfile name="production">
+    <springProfile name="prod">
         <property name="logFilePath" value="/var/log/production/" />
     </springProfile>
 
