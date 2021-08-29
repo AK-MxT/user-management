@@ -7,7 +7,7 @@ plugins {
 
 war {
 	enabled = true
-	archiveFileName = 'test.war'
+	archiveFileName = 'ROOT.war'
 }
 
 group = 'com.user.mng'
