@@ -4,7 +4,7 @@ server:
     session:
       cookie:
         http-only: true
-        secure: true
+        secure: false
       timeout: 600
 spring:
   profiles.active: prod
