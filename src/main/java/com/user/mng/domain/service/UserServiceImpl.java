@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import org.apache.commons.lang3.StringUtils;
 import org.apache.ibatis.session.RowBounds;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -21,10 +22,14 @@ import com.user.mng.domain.model.response.UserEditResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
 import com.user.mng.domain.repository.TrnUserMapper;
 import com.user.mng.exceptions.DataNotFoundException;
+import com.user.mng.exceptions.ServiceLogicException;
 import com.user.mng.utils.CommonUtils;
 
 @Service
 public class UserServiceImpl implements UserService {
+
+	@Value("${db.restrict.user}")
+	private int userLimit;
 
 	// ユーザ情報テーブルのマッパー
 	private final TrnUserMapper trnUserMapper;
@@ -465,6 +470,24 @@ public class UserServiceImpl implements UserService {
 		res.setDeleteFlg(result.getDeleteFlg() ? UserConstant.DELETE_FLG_TRUE : UserConstant.DELETE_FLG_FALSE);
 
 		return res;
+	}
+
+	/**
+	 * ユーザ件数確認
+	 * DBに登録されているユーザの件数を確認する
+	 * 設定ファイルで規定している件数が既に登録されている場合、エラー
+	 *
+	 */
+	@Override
+	public void checkUserCount() throws ServiceLogicException {
+
+		// trn_userテーブルの件数取得
+		long cnt = trnUserMapper.countByExample(new TrnUserExample());
+
+		if (cnt >= userLimit) {
+			// DBのデータ件数が規定の件数以上の場合、登録不可とする
+			throw new ServiceLogicException(UserConstant.USER_LIMIT_EXCEEDED);
+		}
 	}
 
 	/**

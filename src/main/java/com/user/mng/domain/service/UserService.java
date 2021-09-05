@@ -21,6 +21,8 @@ public interface UserService {
 
 	public UserEditResponseEntity getUserForEdit(Long id);
 
+	public void checkUserCount();
+
 	public void insertUser(UserEditRequestEntity user);
 
 	public void updateUser(UserEditRequestEntity user);

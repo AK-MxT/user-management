@@ -19,6 +19,7 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import com.user.mng.constant.AuthConstant;
 import com.user.mng.domain.model.request.AccountRegisterRequestEntity;
 import com.user.mng.domain.service.LoginServiceImpl;
+import com.user.mng.exceptions.ServiceLogicException;
 
 @Controller
 public class AuthController {
@@ -82,8 +83,16 @@ public class AuthController {
 			return "signup";
 		}
 
-		loginServiceImpl.registerAccount(accountRegisterRequestEntity.getUserName(),
-				passwordEncorder.encode(accountRegisterRequestEntity.getPassword()));
+		try {
+			// アカウント登録処理
+			loginServiceImpl.registerAccount(accountRegisterRequestEntity.getUserName(),
+					passwordEncorder.encode(accountRegisterRequestEntity.getPassword()));
+		} catch (ServiceLogicException e) {
+			model.addAttribute("validationError", e.getMessage());
+			model.addAttribute("userForEdit", accountRegisterRequestEntity);
+
+			return "signup";
+		}
 
 		redirectAttributes.addFlashAttribute("information", AuthConstant.REGISTER_SUCCESS);
 

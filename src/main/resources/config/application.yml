@@ -1,10 +1,23 @@
+# アクティブな環境
+spring:
+  profiles.active: local
+# サーバ設定
 server:
   port: 8080
   servlet:
+    # セッションまわりの設定
     session:
       cookie:
         http-only: true
         secure: false
       timeout: 600
-spring:
-  profiles.active: prod
+# DBまわりの設定
+db:
+  # 一覧画面の1ページあたりの表示件数
+  user:
+    list:
+      limit: 10
+  # DBへの登録制限（大量登録などの攻撃対策）
+  restrict:
+    user: 50
+    account: 30

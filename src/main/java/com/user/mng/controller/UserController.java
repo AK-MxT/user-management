@@ -27,6 +27,7 @@ import com.user.mng.domain.model.response.UserEditResponseEntity;
 import com.user.mng.domain.model.response.UserListResponseEntity;
 import com.user.mng.domain.service.UserService;
 import com.user.mng.exceptions.DataNotFoundException;
+import com.user.mng.exceptions.ServiceLogicException;
 
 @Controller
 @RequestMapping(value = "/user")
@@ -197,6 +198,17 @@ public class UserController {
 
 		if (Objects.isNull(userConfirmRequestEntity.getId())) {
 			model.addAttribute("title", UserConstant.TITLE_REGISTER);
+
+			try {
+				// DBへの登録可能件数制限に達していないかチェック
+				userService.checkUserCount();
+			} catch (ServiceLogicException e) {
+				model.addAttribute("validationError", e.getMessage());
+				model.addAttribute("userForEdit", userConfirmRequestEntity);
+
+				return "edit";
+			}
+
 		} else {
 			model.addAttribute("title", UserConstant.TITLE_UPDATE);
 		}

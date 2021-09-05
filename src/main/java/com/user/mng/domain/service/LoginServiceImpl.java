@@ -5,6 +5,7 @@ import java.util.Collection;
 import java.util.Date;
 import java.util.List;
 
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -29,6 +30,9 @@ import com.user.mng.exceptions.ServiceLogicException;
  */
 @Service
 public class LoginServiceImpl implements UserDetailsService {
+
+	@Value("${db.restrict.account}")
+	private int accountLimit;
 
 	// アカウント管理テーブルのマッパー
 	private final TrnAccountMapper trnAccountMapper;
@@ -80,17 +84,25 @@ public class LoginServiceImpl implements UserDetailsService {
 	 * @param password
 	 */
 	@Transactional
-	public void registerAccount(String userName, String password) {
+	public void registerAccount(String userName, String password) throws ServiceLogicException {
 
 		// 検索条件
 		TrnAccountExample filter = new TrnAccountExample();
 		filter.createCriteria().andUserNameEqualTo(userName).andDeleteFlgEqualTo(Boolean.FALSE);
 
-		List<TrnAccount> accountList = trnAccountMapper.selectByExample(filter);
+		long cnt = trnAccountMapper.countByExample(filter);
 
-		if (accountList.size() != 0) {
-			// 取得結果が0件でない場合、既に使われているユーザ名のため、エラー
+		if (cnt != 0) {
+			// 取得件数が0件でない場合、既に使われているユーザ名のため、エラー
 			throw new ServiceLogicException(AuthConstant.USERID_ALREADY_EXISTS);
+		}
+
+		// trn_account全件数確認
+		long accountCnt = trnAccountMapper.countByExample(new TrnAccountExample());
+
+		if (accountCnt >= accountLimit) {
+			// DBのデータ件数が規定の件数以上の場合、登録不可とする
+			throw new ServiceLogicException(AuthConstant.ACCOUNT_LIMIT_EXCEEDED);
 		}
 
 		// システム日時
