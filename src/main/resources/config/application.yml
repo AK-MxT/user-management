@@ -1,6 +1,9 @@
-# アクティブな環境
+# アプリケーション共通設定
 spring:
-  profiles.active: local
+  # アクティブな環境の指定
+  # application-{envName}.ymlを必要数用意して、参照させたい環境設定を以下で指定する
+  # profiles.active: local
+  profiles.active: prod
 # サーバ設定
 server:
   port: 8080
