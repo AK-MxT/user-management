@@ -11,8 +11,9 @@ import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 
@@ -38,7 +39,7 @@ public class AuthController {
 	 *
 	 * @return ログイン画面
 	 */
-	@RequestMapping(value = "/login")
+	@GetMapping(value = "/login")
 	public String login(@RequestParam(value = "error", required = false) String error, Model model) {
 
 		if (Objects.nonNull(error)) {
@@ -56,7 +57,7 @@ public class AuthController {
 	 * @param model
 	 * @return アカウント登録画面
 	 */
-	@RequestMapping(value = "/signup")
+	@GetMapping(value = "/signup")
 	public String signup(Model model) {
 		model.addAttribute("userForEdit", new AccountRegisterRequestEntity());
 		return "signup";
@@ -68,7 +69,7 @@ public class AuthController {
 	 * @param accountRegisterRequestEntity アカウント登録用のリクエストエンティティ
 	 * @return ログイン画面
 	 */
-	@RequestMapping(value = "/register")
+	@PostMapping(value = "/register")
 	public String register(@Validated @ModelAttribute AccountRegisterRequestEntity accountRegisterRequestEntity,
 			BindingResult result, Model model, RedirectAttributes redirectAttributes) {
 
