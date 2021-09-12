@@ -35,9 +35,6 @@ public final class UserConstant {
 	public static final String INSERT_FAILED = "ユーザの登録に失敗しました。";
 	public static final String USER_LIMIT_EXCEEDED = "登録可能な最大ユーザ件数に到達しています。システム管理者に連絡してください。";
 
-	// DB関連
-	public static final int DEFAULT_LIMIT = 10;
-
 	private UserConstant() {
 	}
 }

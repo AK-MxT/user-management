@@ -28,6 +28,11 @@ import com.user.mng.utils.CommonUtils;
 @Service
 public class UserServiceImpl implements UserService {
 
+	// 一覧画面の1ページあたりの表示件数
+	@Value("${db.user.list.limit}")
+	private int selectLimit;
+
+	// DBへの登録制限（大量登録などの攻撃対策。実サービスに乗せる場合には不要）
 	@Value("${db.restrict.user}")
 	private int userLimit;
 
@@ -288,10 +293,10 @@ public class UserServiceImpl implements UserService {
 		filter.setOrderByClause("id");
 
 		// pageの値を元にoffsetを算出する
-		int offset = page == 1 ? 0 : --page * UserConstant.DEFAULT_LIMIT;
+		int offset = page == 1 ? 0 : --page * selectLimit;
 
 		// offset, limitの設定
-		RowBounds hoge = new RowBounds(offset, UserConstant.DEFAULT_LIMIT);
+		RowBounds hoge = new RowBounds(offset, selectLimit);
 
 		// 検索結果の総数を取得
 		Long cnt = trnUserMapper.countByExample(filter);
@@ -300,7 +305,7 @@ public class UserServiceImpl implements UserService {
 		List<TrnUser> result = trnUserMapper.selectByExampleWithRowbounds(filter, hoge);
 
 		// ページング用の件数を計算
-		Double pageCount = Math.ceil(cnt / (double) UserConstant.DEFAULT_LIMIT);
+		Double pageCount = Math.ceil(cnt / (double) selectLimit);
 
 		// ページング件数をセット
 		userListRequestEntity.setPaging(pageCount.intValue());
