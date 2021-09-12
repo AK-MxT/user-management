@@ -39,7 +39,11 @@ public class UserController {
 	/**
 	 * ユーザ一覧画面
 	 *
-	 * @param model
+	 * @param page ページ番号
+	 * @param userListRequestEntity 検索条件
+	 * @param result バリデーション結果格納用クラス
+	 * @param model Modelインスタンス
+	 *
 	 * @return ユーザ一覧画面
 	 */
 	@RequestMapping(value = "/list/{page}", method = { RequestMethod.GET, RequestMethod.POST })
@@ -71,8 +75,9 @@ public class UserController {
 	/**
 	 * ユーザ詳細画面
 	 *
-	 * @param id
-	 * @param model
+	 * @param id 取得対象ID
+	 * @param model Modelインスタンス
+	 * @param redirectAttributes リダイレクト先へ値を渡すためのクラス
 	 *
 	 * @return ユーザ詳細画面
 	 */
@@ -100,8 +105,9 @@ public class UserController {
 	 * ユーザ更新画面
 	 * ユーザ更新のためのデータ取得処理（更新メソッドではない）
 	 *
-	 * @param id
-	 * @param model
+	 * @param id 更新対象ID
+	 * @param model Modelインスタンス
+	 * @param redirectAttributes リダイレクト先へ値を渡すためのクラス
 	 *
 	 * @return ユーザ更新画面
 	 */
@@ -130,9 +136,9 @@ public class UserController {
 	 * 確認画面から戻る
 	 * 更新確認画面から戻る際の処理
 	 *
-	 * @param id
-	 * @param userConfirmRequestEntity
-	 * @param model
+	 * @param id 更新対象ID
+	 * @param userConfirmRequestEntity 確認画面で保持している更新データを格納するエンティティ
+	 * @param model Modelインスタンス
 	 *
 	 * @return ユーザ更新画面
 	 */
@@ -150,7 +156,7 @@ public class UserController {
 	 * ユーザ登録画面
 	 * ユーザ登録のためのエンティティセット処理（登録メソッドではない）
 	 *
-	 * @param model
+	 * @param model Modelインスタンス
 	 *
 	 * @return ユーザ登録画面
 	 */
@@ -168,8 +174,8 @@ public class UserController {
 	 * 確認画面から戻る
 	 * 登録確認画面から戻る際の処理
 	 *
-	 * @param userConfirmRequestEntity
-	 * @param model
+	 * @param userConfirmRequestEntity 確認画面で保持している登録データを格納するエンティティ
+	 * @param model Modelインスタンス
 	 *
 	 * @return ユーザ登録画面
 	 */
@@ -187,8 +193,9 @@ public class UserController {
 	 * ユーザ確認画面
 	 * ユーザ登録更新時のチェック処理
 	 *
-	 * @param userConfirmRequestEntity
-	 * @param model
+	 * @param userConfirmRequestEntity 登録・更新データを格納するエンティティ
+	 * @param result バリデーション結果格納用クラス
+	 * @param model Modelインスタンス
 	 *
 	 * @return ユーザ確認画面
 	 */
@@ -233,8 +240,10 @@ public class UserController {
 	/**
 	 * ユーザ更新
 	 *
-	 * @param userUpdateRequestEntity
-	 * @param model
+	 * @param userEditRequestEntity 更新データ格納用エンティティ
+	 * @param result バリデーション結果格納用クラス
+	 * @param model Modelインスタンス
+	 * @param redirectAttributes リダイレクト先へ値を渡すためのクラス
 	 *
 	 * @return ユーザ一覧画面
 	 */
@@ -277,8 +286,10 @@ public class UserController {
 	/**
 	 * ユーザ登録
 	 *
-	 * @param userUpdateRequestEntity
-	 * @param model
+	 * @param userEditRequestEntity 登録データ格納用エンティティ
+	 * @param result バリデーション結果格納用クラス
+	 * @param model Modelインスタンス
+	 * @param redirectAttributes リダイレクト先へ値を渡すためのクラス
 	 *
 	 * @return ユーザ一覧画面
 	 */
@@ -303,15 +314,15 @@ public class UserController {
 
 		redirectAttributes.addFlashAttribute("information", UserConstant.REGISTER_SUCCESS);
 
-		// 登録後後は一覧画面へリダイレクト
+		// 登録後は一覧画面へリダイレクト
 		return "redirect:/user/list/1";
 	}
 
 	/**
 	 * ユーザ削除処理
 	 *
-	 * @param id
-	 * @param model
+	 * @param id 削除対象ID
+	 * @param redirectAttributes リダイレクト先へ値を渡すためのクラス
 	 *
 	 * @return ユーザ一覧画面
 	 */

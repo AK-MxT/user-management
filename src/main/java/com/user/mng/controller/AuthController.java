@@ -34,8 +34,8 @@ public class AuthController {
 	/**
 	 * ログイン画面
 	 *
-	 * @param error
-	 * @param model
+	 * @param error ログインエラー時は「?error」のパラメータが付いてくる
+	 * @param model Modelインスタンス
 	 *
 	 * @return ログイン画面
 	 */
@@ -54,7 +54,8 @@ public class AuthController {
 	/**
 	 * アカウント登録画面
 	 *
-	 * @param model
+	 * @param model Modelインスタンス
+	 *
 	 * @return アカウント登録画面
 	 */
 	@GetMapping(value = "/signup")
@@ -67,6 +68,10 @@ public class AuthController {
 	 * アカウント登録
 	 *
 	 * @param accountRegisterRequestEntity アカウント登録用のリクエストエンティティ
+	 * @param result バリデーション結果格納用クラス
+	 * @param model Modelインスタンス
+	 * @param redirectAttributes リダイレクト先へ値を渡すためのクラス
+	 *
 	 * @return ログイン画面
 	 */
 	@PostMapping(value = "/register")
