@@ -23,11 +23,14 @@ import com.user.mng.domain.model.entity.AccountEntity;
 import com.user.mng.domain.repository.TrnAccountMapper;
 import com.user.mng.exceptions.ServiceLogicException;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * ログイン管理サービス
  * SpringSecurityが用意しているUserDetailsServiceの実装クラス
  * ログイン管理をDBで行いたい場合に必要
  */
+@Slf4j
 @Service
 public class LoginServiceImpl implements UserDetailsService {
 
@@ -74,6 +77,8 @@ public class LoginServiceImpl implements UserDetailsService {
 		authorities.add(
 				new SimpleGrantedAuthority(account.getAdminFlg() ? AuthConstant.ROLE_ADMIN : AuthConstant.ROLE_USER));
 
+		log.info(AuthConstant.LOGIN_SUCCESS + AuthConstant.USER_NAME + account.getUserName());
+
 		return new AccountEntity(account);
 	}
 
@@ -119,5 +124,7 @@ public class LoginServiceImpl implements UserDetailsService {
 		record.setUpdateUser(UserConstant.DEFAULT_USERNAME);
 
 		trnAccountMapper.insertSelective(record);
+
+		log.info(AuthConstant.REGISTER_SUCCESS + AuthConstant.USER_NAME + record.getUserName());
 	}
 }

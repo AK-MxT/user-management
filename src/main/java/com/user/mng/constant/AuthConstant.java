@@ -10,7 +10,9 @@ public final class AuthConstant {
 	public static final String ROLE_ADMIN = "ADMIN";
 
 	// アラートメッセージ系
+	public static final String USER_NAME = "ユーザ名: ";
 	public static final String REGISTER_SUCCESS = "アカウントの登録が完了しました。";
+	public static final String LOGIN_SUCCESS = "ログインしました。";
 	public static final String LOGIN_ERROR = "ユーザ名 または パスワードに誤りがあります。";
 
 	public static final String USERID_IS_EMPTY = "ユーザIDが入力されていません。";

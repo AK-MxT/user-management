@@ -29,6 +29,9 @@ import com.user.mng.domain.service.UserService;
 import com.user.mng.exceptions.DataNotFoundException;
 import com.user.mng.exceptions.ServiceLogicException;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 @RequestMapping(value = "/user")
 public class UserController {
@@ -89,6 +92,7 @@ public class UserController {
 		try {
 			user = userService.getUser(id);
 		} catch (DataNotFoundException e) {
+			log.error(e.getClass().getSimpleName(), e);
 			redirectAttributes.addFlashAttribute("exception", e.getMessage());
 
 			// エラー時は一覧画面へ戻す
@@ -119,6 +123,7 @@ public class UserController {
 		try {
 			user = userService.getUserForEdit(id);
 		} catch (DataNotFoundException e) {
+			log.error(e.getClass().getSimpleName(), e);
 			redirectAttributes.addFlashAttribute("exception", e.getMessage());
 
 			// エラー時は一覧画面へ戻す
@@ -210,6 +215,7 @@ public class UserController {
 				// DBへの登録可能件数制限に達していないかチェック
 				userService.checkUserCount();
 			} catch (ServiceLogicException e) {
+				log.error(e.getClass().getSimpleName(), e);
 				model.addAttribute("validationError", e.getMessage());
 				model.addAttribute("userForEdit", userConfirmRequestEntity);
 
@@ -267,6 +273,7 @@ public class UserController {
 			// ユーザ更新処理
 			userService.updateUser(userEditRequestEntity);
 		} catch (DataNotFoundException e) {
+			log.error(e.getClass().getSimpleName(), e);
 			List<String> errorList = new ArrayList<String>();
 			errorList.add(e.getMessage());
 
@@ -332,6 +339,7 @@ public class UserController {
 		try {
 			userService.deleteUser(id);
 		} catch (DataNotFoundException e) {
+			log.error(e.getClass().getSimpleName(), e);
 			redirectAttributes.addFlashAttribute("exception", e.getMessage());
 
 			// エラー時は一覧画面へ戻す

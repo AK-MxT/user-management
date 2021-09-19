@@ -22,6 +22,9 @@ import com.user.mng.domain.model.request.AccountRegisterRequestEntity;
 import com.user.mng.domain.service.LoginServiceImpl;
 import com.user.mng.exceptions.ServiceLogicException;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Controller
 public class AuthController {
 
@@ -94,6 +97,7 @@ public class AuthController {
 			loginServiceImpl.registerAccount(accountRegisterRequestEntity.getUserName(),
 					passwordEncorder.encode(accountRegisterRequestEntity.getPassword()));
 		} catch (ServiceLogicException e) {
+			log.error(e.getClass().getSimpleName(), e);
 			model.addAttribute("validationError", e.getMessage());
 			model.addAttribute("userForEdit", accountRegisterRequestEntity);
 

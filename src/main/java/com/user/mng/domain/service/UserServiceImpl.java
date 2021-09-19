@@ -25,6 +25,9 @@ import com.user.mng.exceptions.DataNotFoundException;
 import com.user.mng.exceptions.ServiceLogicException;
 import com.user.mng.utils.CommonUtils;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class UserServiceImpl implements UserService {
 
@@ -538,6 +541,8 @@ public class UserServiceImpl implements UserService {
 			// 更新件数が1件でない場合、エラー
 			throw new DataNotFoundException(UserConstant.UPDATE_USER_NOT_FOUND + user.getId().toString());
 		}
+
+		log.info(UserConstant.UPDATE_SUCCESS + UserConstant.ID + user.getId());
 	}
 
 	/**
@@ -557,6 +562,8 @@ public class UserServiceImpl implements UserService {
 			// 削除件数が1件でない場合、エラー
 			throw new DataNotFoundException(UserConstant.DELETE_USER_NOT_FOUND + id.toString());
 		}
+
+		log.info(UserConstant.DELETE_SUCCESS + UserConstant.ID + id);
 	}
 
 	/**
@@ -597,5 +604,7 @@ public class UserServiceImpl implements UserService {
 
 		// ユーザを登録
 		trnUserMapper.insertSelective(record);
+
+		log.info(UserConstant.REGISTER_SUCCESS);
 	}
 }
