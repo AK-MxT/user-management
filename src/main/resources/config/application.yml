@@ -2,8 +2,8 @@
 spring:
   # アクティブな環境の指定
   # application-{envName}.ymlを必要数用意して、参照させたい環境設定を以下で指定する
-  profiles.active: local
-  # profiles.active: prod
+  #profiles.active: local
+   profiles.active: prod
 # サーバ設定
 server:
   port: 8080
@@ -12,7 +12,7 @@ server:
     session:
       cookie:
         http-only: true
-        secure: false
+        secure: true
       timeout: 600
 # DBまわりの設定
 db:
