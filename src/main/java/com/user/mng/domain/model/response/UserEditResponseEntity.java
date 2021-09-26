@@ -50,16 +50,16 @@ public class UserEditResponseEntity {
 	// 備考
 	public String remarks;
 
-	// 作成者
+	// 登録者
 	public String insertUser;
 
-	// 作成日
+	// 登録日時
 	public String insertDate;
 
 	// 更新者
 	public String updateUser;
 
-	// 更新日
+	// 更新日時
 	public String updateDate;
 
 	// 削除フラグ
